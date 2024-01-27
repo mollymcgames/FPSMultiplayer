@@ -107,6 +107,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clampInDegrees: {x: 360, y: 180}
   lockCursor: 1
+  sensitivity: {x: 2, y: 2}
   smoothing: {x: 3, y: 3}
   characterBody: {fileID: 6212037542837207263}
   scoped: 0
@@ -122,12 +123,13 @@ GameObject:
   - component: {fileID: 1193022158501410979}
   - component: {fileID: 3406337486582530602}
   - component: {fileID: 7173875472593036553}
-  - component: {fileID: 4963954838240055300}
   - component: {fileID: 1780174273928523488}
   - component: {fileID: 6584854997233008803}
   - component: {fileID: 7246367263086583230}
   - component: {fileID: 5744315272183348099}
   - component: {fileID: 8502061757608618783}
+  - component: {fileID: 695173543966121414}
+  - component: {fileID: 7672050605046613534}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -224,20 +226,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4963954838240055300
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6212037542837207263}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1bca4d3cae678bc48ba7745fa3c7999a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  walkSpeed: 4
-  maxVelocityChange: 10
 --- !u!54 &1780174273928523488
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -333,5 +321,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dddba125859969e498b4152e358d65af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerMovement: {fileID: 4963954838240055300}
+  playerMovement: {fileID: 695173543966121414}
   camera: {fileID: 5333704516233317740}
+--- !u!114 &695173543966121414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6212037542837207263}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bca4d3cae678bc48ba7745fa3c7999a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkSpeed: 6
+  runSpeed: 14
+  maxVelocityChange: 10
+  airControl: 0.5
+  jumpHeight: 5
+--- !u!135 &7672050605046613534
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6212037542837207263}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5052141
+  m_Center: {x: 0, y: -0.63, z: 0}

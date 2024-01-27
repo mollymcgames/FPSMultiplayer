@@ -5,11 +5,20 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 
-    public float walkSpeed = 4f;
+    public float walkSpeed = 8f;
+    public float runSpeed = 14f;
     public float maxVelocityChange = 10f;
+
+    public float airControl = 0.5f;
+
+    public float jumpHeight = 5f;
 
     private Vector2 input;
     private Rigidbody rb;
+
+    private bool running;
+    private bool jumping;
+    private bool grounded = false;
 
     // Start is called before the first frame update
     void Start()
@@ -22,11 +31,52 @@ public class PlayerMovement : MonoBehaviour
     {
         input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         input.Normalize();
+
+        running = Input.GetButton("Run");
+        jumping = Input.GetButton("Jump");
+    }
+
+    //check were grounded
+    private void OnTriggerStay(Collider other)
+    {
+        grounded = true;
     }
 
     void FixedUpdate()
     {
-        rb.AddForce(CalculateMovement(walkSpeed), ForceMode.VelocityChange);
+        //jumping
+        if (grounded)
+        {
+            if (jumping)
+            {
+                rb.velocity = new Vector3(rb.velocity.x, jumpHeight, rb.velocity.z);
+            }
+            else if(input.magnitude > 0.5f)
+            {
+                rb.AddForce(CalculateMovement(running ? runSpeed : walkSpeed), ForceMode.VelocityChange);
+            }
+            else
+            {
+                Vector3 velocity1 = rb.velocity;
+                velocity1 = new Vector3(velocity1.x * 0.2f, velocity1.y, velocity1.z * 0.2f);
+                rb.velocity = Vector3.Lerp(rb.velocity, velocity1, 0.2f);
+            }
+        }
+        else
+        {
+            if(input.magnitude > 0.5f)
+            {
+                rb.AddForce(CalculateMovement(running ? runSpeed * airControl : walkSpeed * airControl), ForceMode.VelocityChange);
+            }
+            else
+            {
+                Vector3 velocity1 = rb.velocity;
+                velocity1 = new Vector3(velocity1.x * 0.2f, velocity1.y, velocity1.z * 0.2f);
+                rb.velocity = Vector3.Lerp(rb.velocity, velocity1, 0.2f);
+            }
+        }
+
+        grounded = false;
     }
 
     Vector3 CalculateMovement(float speed)

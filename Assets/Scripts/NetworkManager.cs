@@ -6,7 +6,6 @@ using Photon.Pun;
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
     public GameObject player;
-    [Space]
     public Transform spawnPoint;
     // Start is called before the first frame update
     void Start()
