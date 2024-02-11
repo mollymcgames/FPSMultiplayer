@@ -28,24 +28,6 @@ public class MoveOnKeyPress : MonoBehaviourPun
                 }
             }
         }
-
-        // if (photonView.IsMine && isInSecondRealm)
-        // {
-        //     if (Input.GetKeyDown(KeyCode.V))
-        //     {
-        //         photonView.RPC("MoveDown", RpcTarget.AllBuffered, yoffset);
-        //         isInSecondRealm = false; //If we are in the first realm, set the bool to false
-        //     }
-        // }
-
-        // if (photonView.IsMine && isInSecondRealm)
-        // {
-        //     if (Input.GetKeyDown(KeyCode.V))
-        //     {
-        //         photonView.RPC("MoveDown", RpcTarget.AllBuffered, yoffset);
-        //         isInSecondRealm = false; //If we are in the first realm, set the bool to false
-        //     }
-        // }
         
     }
 
