@@ -55,7 +55,7 @@ public class WeaponDamage : MonoBehaviour
             Fire();
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) && mag > 0)
         {
             Reload();
         }
