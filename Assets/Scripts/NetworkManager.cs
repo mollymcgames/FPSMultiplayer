@@ -9,7 +9,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public static NetworkManager instance;
     public GameObject player;
-    public Transform spawnPoint;
+    public Transform[] spawnPoints;
 
     public GameObject roomCamera;
 
@@ -78,9 +78,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public void RespawnPlayer()
     {
+
+        Transform spawnPoint = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Length)];
         GameObject _player = PhotonNetwork.Instantiate(player.name, spawnPoint.position, Quaternion.identity);
         _player.GetComponent<PlayerSetup>().LocalPlayer(); //Only called on local player or the person running the game
         _player.GetComponent<Health>().isLocalPlayer = true;
-        _player.GetComponent<PhotonView>().RPC("SetName", RpcTarget.AllBuffered, nickname);
+        _player.GetComponent<PhotonView>().RPC("SetName", RpcTarget.AllBuffered, nickname); //buffers the name so that it is set for all players
     }
 }
