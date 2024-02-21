@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using TMPro;
 
-public class Health : MonoBehaviour
+public class Health : MonoBehaviourPunCallbacks
 {
     public int health;
 
@@ -27,7 +27,18 @@ public class Health : MonoBehaviour
             {
                 NetworkManager.instance.RespawnPlayer();
             }
-            Destroy(gameObject);
+            // Destroy(gameObject);
+
+            if (photonView.IsMine)
+            {
+                if (gameObject != null && photonView != null)
+                    PhotonNetwork.Destroy(gameObject);
+                // PhotonNetwork.Destroy(gameObject);
+            }
+            else
+            {
+                Debug.LogWarning("Not mine");
+            }
         }
     }
 }

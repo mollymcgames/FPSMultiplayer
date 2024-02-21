@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 302313024}
   - component: {fileID: 302313023}
   m_Layer: 0
-  m_Name: SpawnPoint1
+  m_Name: SpawnPointLR1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -318,7 +318,7 @@ GameObject:
   - component: {fileID: 372136762}
   - component: {fileID: 372136761}
   m_Layer: 0
-  m_Name: SpawnPoint3
+  m_Name: SpawnPointDR1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -383,7 +383,7 @@ Transform:
   m_GameObject: {fileID: 372136760}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.58, y: 52, z: -12.8}
+  m_LocalPosition: {x: 4.58, y: 1.703, z: -12.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -668,7 +668,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d539f8498fa6a1b488d39e6308c7ece3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 6212037542837207263, guid: 39f8fd33c883b6c4fa3d1c414a06ed5a, type: 3}
+  lightRealmPlayerPrefab: {fileID: 6212037542837207263, guid: 39f8fd33c883b6c4fa3d1c414a06ed5a, type: 3}
+  darkRealmPlayerPrefab: {fileID: 6212037542837207263, guid: c32c19f7cbf7df14289dfe25afc4bdfe, type: 3}
   spawnPoints:
   - {fileID: 302313025}
   - {fileID: 1357426893}
@@ -1598,7 +1599,7 @@ GameObject:
   - component: {fileID: 1357426892}
   - component: {fileID: 1357426891}
   m_Layer: 0
-  m_Name: SpawnPoint2
+  m_Name: SpawnPointLR2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
