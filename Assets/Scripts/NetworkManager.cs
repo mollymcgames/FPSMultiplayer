@@ -4,7 +4,12 @@ using UnityEngine;
 using Photon.Pun;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
+using TMPro;
+using static Photon.Pun.UtilityScripts.PunTeams;
+//'PunTeams' is obsolete: 'do not use this or add it to the scene. use PhotonTeamsManager instead'CS0618
+// using Photon.Pun.UtilityScripts;
 
+// IPunObservable
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
 
@@ -44,15 +49,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         connectUI.SetActive(true);
     }
 
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        // Debug.Log("Connecting to server...");
-
-        // PhotonNetwork.ConnectUsingSettings();
-    }
-
     public override void OnConnectedToMaster()
     {
         base.OnConnectedToMaster();
@@ -66,7 +62,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         base.OnJoinedLobby();
 
-        PhotonNetwork.JoinOrCreateRoom("test", null, null);
+        var options = new RoomOptions() { };
+        options.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
+        options.CustomRoomProperties.Add("teamMachinePartsCount", 0);
+
+        PhotonNetwork.JoinOrCreateRoom("test", roomOptions:options, null);
 
         Debug.Log("Joined lobby!");
     }
@@ -78,9 +78,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         roomCamera.SetActive(false);
 
-        // Set the realm of the player based on the number of players in the room
-        bool isLightRealm = PhotonNetwork.PlayerList.Length % 2 == 0;  // Check if the number of players in the room is even
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "Realm", isLightRealm ? "Light" : "Dark" } });
         AssignPlayerTeam();
 
         Room currentRoom = PhotonNetwork.CurrentRoom;
@@ -88,6 +85,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     }    
     public void RespawnPlayer()
     {
+        Debug.Log("Respawning player: " + nickname);
+
         // Get the existing player's ID
         int localPlayerID = PhotonNetwork.LocalPlayer.ActorNumber;
         // Find the existing player object
@@ -118,15 +117,37 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         _player.GetComponent<PlayerSetup>().LocalPlayer();
         _player.GetComponent<Health>().isLocalPlayer = true;
         _player.GetComponent<PhotonView>().RPC("SetName", RpcTarget.AllBuffered, nickname);
+
+        // @TODO UGLY code reuse - this is done twice! Pull out into a shared function.
+        // Put name on screen
+        TextMeshProUGUI nicknameText = GameObject.Find("Nickname").GetComponent<TextMeshProUGUI>();
+        nicknameText.text = "Name: " + nickname;
+
+        // Put realm on screen
+        TextMeshProUGUI realmText = GameObject.Find("Realm").GetComponent<TextMeshProUGUI>();
+        realmText.text = "Realm: " + realm;
+
+        if ("Light" == realm)
+        {
+            _player.GetComponent<PhotonView>().RPC("UpdateCollectibleCountText", RpcTarget.AllBufferedViaServer);
+        }
+
     }
 
 
     void AssignPlayerTeam()
     {
+        Debug.Log("*** NEW PLAYER JOINING ***");
+
         //TO DO - if realm is dark then spawn at dark spawn point array else spawn at light spawn point array
         //TO DO - then make the code into one function for spanwing player
 
-        bool isLightRealm = PhotonNetwork.PlayerList.Length % 2 == 0; // Assign alternating teams
+        // Set the realm of the player based on the number of players in the room
+        bool isLightRealm = PhotonNetwork.PlayerList.Length % 2 == 1;  // Check if the number of players in the room is even
+        string realm = isLightRealm ? "Light" : "Dark";
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "Realm", realm } });
+        Debug.Log("Player ["+nickname+"] assigned to realm ["+realm+"]");
+
         GameObject playerPrefab = isLightRealm ? lightRealmPlayerPrefab : darkRealmPlayerPrefab;
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
         GameObject _player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPoint.position, Quaternion.identity);
@@ -134,9 +155,25 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         _player.GetComponent<Health>().isLocalPlayer = true;
         _player.GetComponent<PhotonView>().RPC("SetName", RpcTarget.AllBuffered, nickname);
 
+        // Instantiate the Machine Parts too (this has to be done by Photon, so that Photon can correctly manage their lifecycle!
+        GameObject machine1Prefab = (GameObject)Resources.Load("Machine", typeof(GameObject)); 
+        GameObject machine2Prefab = (GameObject)Resources.Load("Machine2", typeof(GameObject)); 
+
+        PhotonNetwork.InstantiateRoomObject(machine1Prefab.name, machine1Prefab.transform.position, Quaternion.identity);
+        PhotonNetwork.InstantiateRoomObject(machine2Prefab.name, machine2Prefab.transform.position, Quaternion.identity);
+
+        // @TODO code reuse - this is done twice! Pull out into a shared function.
+        // Put name on screen
+        TextMeshProUGUI nicknameText = GameObject.Find("Nickname").GetComponent<TextMeshProUGUI>();
+        nicknameText.text = "Name: " + nickname;
+
+        // Put realm on screen
+        TextMeshProUGUI realmText = GameObject.Find("Realm").GetComponent<TextMeshProUGUI>();
+        realmText.text = "Realm: " + realm;
+
+        if ("Light" == realm)
+        {                //Debug.Log("Invoking assignment on realm: " + realm);
+            _player.GetComponent<PhotonView>().RPC("UpdateCollectibleCountText", RpcTarget.AllBufferedViaServer);
+        }
     }
-
-    //TO DO - measure light or dark realm player count accordingly
-    //TO DO - make sure player spawn points arent overlapping
-
 }
