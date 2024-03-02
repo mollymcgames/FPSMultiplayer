@@ -10,9 +10,12 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
     //Player should be able to pick up a collectible for the team
     //Player should be able to see how many collectibles they have and everyone else in the team should be able to see it also
 
-    //The number of collectibles the player has
+    // The number of collectibles the team has
     private int teamMachinePartsCount = 0;
-    //private int hasCollidedWithMachine = 0;
+
+    // The number of collectibles the player has
+    private int playerMachinePartsCount = 0;
+
     private float lastEnteredTime = 0;
 
     void Awake()
@@ -23,33 +26,31 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
     private void OnTriggerEnter(Collider other)
     {
         teamMachinePartsCount = (int)PhotonNetwork.CurrentRoom.CustomProperties["teamMachinePartsCount"];
+        playerMachinePartsCount = (int)PhotonNetwork.LocalPlayer.CustomProperties["MachinePartsCount"];
 
         int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
         Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter Collided with: " + other.name);
-        Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter current machine count: " + teamMachinePartsCount);
+        Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter current team machine count: " + teamMachinePartsCount);
+        Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter current player machine count: " + playerMachinePartsCount);
 
         //Get the collectible PhotonView
         Debug.Log("[" + actorNumber + "] OnTriggerEnter() for player");
 
-        bool thisIsMine = false;
+//        bool thisIsMine = false;
         PhotonView collectiblePhotonView = other.GetComponent<PhotonView>();
-        if (collectiblePhotonView != null)
-            thisIsMine = collectiblePhotonView.IsMine;
-
-        Debug.Log("[" + actorNumber + "] OnTriggerEnter() This is mine: " + thisIsMine);
-
+//        if (collectiblePhotonView != null)
+//            thisIsMine = collectiblePhotonView.IsMine;
+        
         if (other.CompareTag("Collectible") && Time.fixedTime - lastEnteredTime > 1)
         {
-            Debug.Log("[" + actorNumber + "] OnTriggerEnter() Doing technical things thanks to: " + other.name);
-
             IncrementTeamMachinePartsCount();
+            IncrementPlayerMachinePartsCount();
 
-            string realm = (string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"];
+//            string realm = (string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"];
 
             // Only the Master can remove the machine parts from the game.  
             PhotonView photonView2 = other.gameObject.GetComponent<PhotonView>();
-            photonView.RPC("DestroyMachinePart", RpcTarget.MasterClient, photonView2.ViewID);
-
+            photonView.RPC("DestroyMachinePart", RpcTarget.MasterClient, photonView2.ViewID);   
         }
         else
         {
@@ -81,14 +82,30 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
         int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
         Debug.Log("[" + actorNumber + "] IncrementTeamMachinePartsCount() for player");
         Debug.Log("[" + actorNumber + "] IncrementTeamMachinePartsCount() IsMine value:" + photonView.IsMine);
-        Debug.Log("[" + actorNumber + "] Incrementing machine count:" + teamMachinePartsCount);
+        Debug.Log("[" + actorNumber + "] IncrementTeamMachinePartsCount()Incrementing team machine count:" + teamMachinePartsCount);
 
-        //Increment the teams machine parts count
+        // Increment the team's machine parts count
         teamMachinePartsCount++;
         PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "teamMachinePartsCount", teamMachinePartsCount } });
-        Debug.Log("[" + actorNumber + "] Incremented machine count:" + teamMachinePartsCount);
+        Debug.Log("[" + actorNumber + "] IncrementTeamMachinePartsCount() Incremented team machine count:" + teamMachinePartsCount);
 
-        UpdateCollectibleCountText();
+        UpdateTeamCollectibleCountText();
+    }
+
+    //Method to increment the teams machine parts count
+    private void IncrementPlayerMachinePartsCount()
+    {
+        int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+        Debug.Log("[" + actorNumber + "] IncrementPlayerMachinePartsCount() for player");
+        Debug.Log("[" + actorNumber + "] IncrementPlayerMachinePartsCount() IsMine value:" + photonView.IsMine);
+        Debug.Log("[" + actorNumber + "] IncrementPlayerMachinePartsCount() Incrementing player machine count:" + playerMachinePartsCount);
+
+        // Increment the player's machine parts count
+        playerMachinePartsCount++;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "MachinePartsCount", playerMachinePartsCount } });
+        Debug.Log("[" + actorNumber + "] IncrementPlayerMachinePartsCount() Incremented player machine count:" + playerMachinePartsCount);
+
+        UpdatePlayerCollectibleCountText();
     }
 
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
@@ -99,41 +116,81 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
             teamMachinePartsCount = (int)_teamMachinePartsCount;
             Debug.Log("teamMachinePartsCount just got updated: " + teamMachinePartsCount);
 
-            UpdateCollectibleCountText();
+            UpdateTeamCollectibleCountText();
+        }
+        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("MachinePartsCount", out object _playerMachinePartsCount))
+        {
+            playerMachinePartsCount = (int)_playerMachinePartsCount;
+            Debug.Log("playerMachinePartsCount just got updated: " + teamMachinePartsCount);
+
+            UpdateTeamCollectibleCountText();
         }
     }
 
-    //Method to update the collectible count text
+    //Method to update the team collectible count text
     [PunRPC]
-    private void UpdateCollectibleCountText()
+    private void UpdateTeamCollectibleCountText()
     {
         int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
 
         string realm = (string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"];
-        Debug.Log("[" + actorNumber + "] Updating text for realm: " + realm);
+        Debug.Log("[" + actorNumber + "] RPC UpdateTeamCollectibleCountText() Updating text for realm: " + realm);
 
-        UpdateCollectibleCountText(realm);
+        UpdateTeamCollectibleCountText(realm);
     }
 
     [PunRPC]
-    private void UpdateCollectibleCountText(string realm)
+    private void UpdateTeamCollectibleCountText(string realm)
     {
         teamMachinePartsCount = (int)PhotonNetwork.CurrentRoom.CustomProperties["teamMachinePartsCount"];
 
         int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
 
-        Debug.Log("[" + actorNumber + "] RPC UpdateCollectibleCountText invoked! realm:" + realm);
-        Debug.Log("[" + actorNumber + "] RPC UpdateCollectibleCountText invoked! count:" + teamMachinePartsCount);
+        Debug.Log("[" + actorNumber + "] UpdateTeamCollectibleCountText(realm) invoked! realm:" + realm);
+        Debug.Log("[" + actorNumber + "] UpdateTeamCollectibleCountText(realm) invoked! team machine parts count:" + teamMachinePartsCount);
 
         if ("Light" == realm)
         {
-            //Reference to the TextMeshPro object that will display the collectible count
-            TextMeshProUGUI collectibleCountText = GameObject.Find("MachineParts").GetComponent<TextMeshProUGUI>();
+            // Reference to the TextMeshPro object that will display the team collectible count
+            TextMeshProUGUI teamCollectibleCountText = GameObject.Find("MachinePartsTeam").GetComponent<TextMeshProUGUI>();
 
-            Debug.Log("[" + actorNumber + "] Updating machine count text:" + teamMachinePartsCount);
+            Debug.Log("[" + actorNumber + "] UpdateTeamCollectibleCountText(realm) Updating team machine count text:" + teamMachinePartsCount);
 
-            //Update the collectible count text
-            collectibleCountText.text = "Machine Parts: " + teamMachinePartsCount;
+            // Update the Team collectible count text
+            teamCollectibleCountText.text = "Team Machine Parts: " + teamMachinePartsCount;
+        }
+    }
+
+    //Method to update the player collectible count text
+    [PunRPC]
+    private void UpdatePlayerCollectibleCountText()
+    {
+        int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+
+        string realm = (string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"];
+        Debug.Log("[" + actorNumber + "] RPC UpdatePlayerCollectibleCountText() Updating text for realm: " + realm);
+
+        UpdatePlayerCollectibleCountText(realm);
+    }
+
+    private void UpdatePlayerCollectibleCountText(string realm)
+    {
+        //playerMachinePartsCount = (int)PhotonNetwork.LocalPlayer.CustomProperties["MachinePartsCount"];
+
+        int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+
+        Debug.Log("[" + actorNumber + "] UpdateCollectibleCountText(realm) invoked! realm:" + realm);
+        Debug.Log("[" + actorNumber + "] UpdateCollectibleCountText(realm) invoked! player machine parts count:" + playerMachinePartsCount);
+
+        if ("Light" == realm)
+        {
+            // Reference to the TextMeshPro object that will display the team collectible count
+            TextMeshProUGUI playerCollectibleCountText = GameObject.Find("MachinePartsPlayer").GetComponent<TextMeshProUGUI>();
+
+            Debug.Log("[" + actorNumber + "] UpdateCollectibleCountText(realm) Updating player machine count text:" + playerMachinePartsCount);
+
+            // Update the Player collectible count text
+            playerCollectibleCountText.text = "Player Machine Parts: " + playerMachinePartsCount;
         }
     }
 
