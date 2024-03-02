@@ -5,8 +5,9 @@ using Photon.Pun;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
 using TMPro;
-using static Photon.Pun.UtilityScripts.PunTeams;
-using static UnityEditor.Experimental.GraphView.GraphView;
+//using static Photon.Pun.UtilityScripts.PunTeams;
+//using static UnityEditor.Experimental.GraphView.GraphView;
+
 //'PunTeams' is obsolete: 'do not use this or add it to the scene. use PhotonTeamsManager instead'CS0618
 // using Photon.Pun.UtilityScripts;
 
