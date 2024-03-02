@@ -21,10 +21,12 @@ public class MoveOnKeyPress : MonoBehaviourPun
                 if (inFirstRealm)
                 {
                     photonView.RPC("Move", RpcTarget.AllBuffered, yoffset);
+                    CameraLayersController.switchToDR();
                 }
                 else
                 {
                     photonView.RPC("MoveDown", RpcTarget.AllBuffered, doffset);
+                    CameraLayersController.switchToLR();
                 }
             }
         }

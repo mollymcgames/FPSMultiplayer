@@ -129,7 +129,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         if ("Light" == realm)
         {
+            CameraLayersController.switchToLR();
             _player.GetComponent<PhotonView>().RPC("UpdateCollectibleCountText", RpcTarget.AllBufferedViaServer);
+        } 
+        else
+        {
+            CameraLayersController.switchToDR();
         }
 
     }
@@ -173,7 +178,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         if ("Light" == realm)
         {                //Debug.Log("Invoking assignment on realm: " + realm);
+            CameraLayersController.switchToLR();
             _player.GetComponent<PhotonView>().RPC("UpdateCollectibleCountText", RpcTarget.AllBufferedViaServer);
+        }
+        else
+        {
+            CameraLayersController.switchToDR();
         }
     }
 }
