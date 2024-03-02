@@ -6,6 +6,7 @@ using ExitGames.Client.Photon;
 using Photon.Realtime;
 using TMPro;
 using static Photon.Pun.UtilityScripts.PunTeams;
+using static UnityEditor.Experimental.GraphView.GraphView;
 //'PunTeams' is obsolete: 'do not use this or add it to the scene. use PhotonTeamsManager instead'CS0618
 // using Photon.Pun.UtilityScripts;
 
@@ -26,6 +27,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public GameObject connectUI;
 
     private string nickname = "unnamed";
+    private string realm = "";
 
     private bool spawnlightRealmPlayer = true; //flag to determine which team to spawn next
 
@@ -78,7 +80,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         roomCamera.SetActive(false);
 
-        AssignPlayerTeam();
+        SpawnNewPlayer();
 
         Room currentRoom = PhotonNetwork.CurrentRoom;
         Debug.Log("current room properties: " + currentRoom.CustomProperties);        
@@ -103,44 +105,26 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
 
         // Get the existing player's team
-        string realm = (string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"];
+        realm = (string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"];
 
         // Assign the player's team based on the existing team
         GameObject playerPrefab = realm == "Light" ? lightRealmPlayerPrefab : darkRealmPlayerPrefab;
+
+        // Reset their MachinePartsCount to zero
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "MachinePartsCount", 0 } });            
 
         // Get a random spawn point
         //TO DO - if realm is dark then spawn at dark spawn point array else spawn at light spawn point array
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
 
         // Instantiate the player at the spawn point
-        GameObject _player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPoint.position, Quaternion.identity);
-        _player.GetComponent<PlayerSetup>().LocalPlayer();
-        _player.GetComponent<Health>().isLocalPlayer = true;
-        _player.GetComponent<PhotonView>().RPC("SetName", RpcTarget.AllBuffered, nickname);
+        GameObject _player = deployPlayer(playerPrefab, spawnPoint);
 
-        // @TODO UGLY code reuse - this is done twice! Pull out into a shared function.
-        // Put name on screen
-        TextMeshProUGUI nicknameText = GameObject.Find("Nickname").GetComponent<TextMeshProUGUI>();
-        nicknameText.text = "Name: " + nickname;
-
-        // Put realm on screen
-        TextMeshProUGUI realmText = GameObject.Find("Realm").GetComponent<TextMeshProUGUI>();
-        realmText.text = "Realm: " + realm;
-
-        if ("Light" == realm)
-        {
-            CameraLayersController.switchToLR();
-            _player.GetComponent<PhotonView>().RPC("UpdateCollectibleCountText", RpcTarget.AllBufferedViaServer);
-        } 
-        else
-        {
-            CameraLayersController.switchToDR();
-        }
+        setOnScreenPlayerStatsAndVisibility(_player);
 
     }
 
-
-    void AssignPlayerTeam()
+    void SpawnNewPlayer()
     {
         Debug.Log("*** NEW PLAYER JOINING ***");
 
@@ -149,25 +133,37 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         // Set the realm of the player based on the number of players in the room
         bool isLightRealm = PhotonNetwork.PlayerList.Length % 2 == 1;  // Check if the number of players in the room is even
-        string realm = isLightRealm ? "Light" : "Dark";
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "Realm", realm } });
-        Debug.Log("Player ["+nickname+"] assigned to realm ["+realm+"]");
+        realm = isLightRealm ? "Light" : "Dark";
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "Realm", realm }, { "MachinePartsCount", 0 } });
+        Debug.Log("Player [" + nickname + "] assigned to realm [" + realm + "]");
 
         GameObject playerPrefab = isLightRealm ? lightRealmPlayerPrefab : darkRealmPlayerPrefab;
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-        GameObject _player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPoint.position, Quaternion.identity);
-        _player.GetComponent<PlayerSetup>().LocalPlayer();
-        _player.GetComponent<Health>().isLocalPlayer = true;
-        _player.GetComponent<PhotonView>().RPC("SetName", RpcTarget.AllBuffered, nickname);
+
+        // Instantiate the player at the spawn point
+        GameObject _player = deployPlayer(playerPrefab, spawnPoint);
 
         // Instantiate the Machine Parts too (this has to be done by Photon, so that Photon can correctly manage their lifecycle!
-        GameObject machine1Prefab = (GameObject)Resources.Load("Machine", typeof(GameObject)); 
-        GameObject machine2Prefab = (GameObject)Resources.Load("Machine2", typeof(GameObject)); 
+        GameObject machine1Prefab = (GameObject)Resources.Load("Machine", typeof(GameObject));
+        GameObject machine2Prefab = (GameObject)Resources.Load("Machine2", typeof(GameObject));
 
         PhotonNetwork.InstantiateRoomObject(machine1Prefab.name, machine1Prefab.transform.position, Quaternion.identity);
         PhotonNetwork.InstantiateRoomObject(machine2Prefab.name, machine2Prefab.transform.position, Quaternion.identity);
 
-        // @TODO code reuse - this is done twice! Pull out into a shared function.
+        setOnScreenPlayerStatsAndVisibility(_player);
+    }
+
+    private GameObject deployPlayer(GameObject playerPrefab, Transform spawnPoint)
+    {
+        GameObject _player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPoint.position, Quaternion.identity);
+        _player.GetComponent<PlayerSetup>().LocalPlayer();
+        _player.GetComponent<Health>().isLocalPlayer = true;
+        _player.GetComponent<PhotonView>().RPC("SetName", RpcTarget.AllBuffered, nickname);
+        return _player;
+    }
+
+    private void setOnScreenPlayerStatsAndVisibility(GameObject _player)
+    {
         // Put name on screen
         TextMeshProUGUI nicknameText = GameObject.Find("Nickname").GetComponent<TextMeshProUGUI>();
         nicknameText.text = "Name: " + nickname;
@@ -177,9 +173,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         realmText.text = "Realm: " + realm;
 
         if ("Light" == realm)
-        {                //Debug.Log("Invoking assignment on realm: " + realm);
+        {
             CameraLayersController.switchToLR();
-            _player.GetComponent<PhotonView>().RPC("UpdateCollectibleCountText", RpcTarget.AllBufferedViaServer);
+            _player.GetComponent<PhotonView>().RPC("UpdateTeamCollectibleCountText", RpcTarget.AllBufferedViaServer);
+            _player.GetComponent<PhotonView>().RPC("UpdatePlayerCollectibleCountText", RpcTarget.AllBufferedViaServer);
         }
         else
         {
