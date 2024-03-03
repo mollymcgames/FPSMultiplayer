@@ -5,13 +5,9 @@ using Photon.Pun;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
 using TMPro;
-//using static Photon.Pun.UtilityScripts.PunTeams;
-//using static UnityEditor.Experimental.GraphView.GraphView;
-
 //'PunTeams' is obsolete: 'do not use this or add it to the scene. use PhotonTeamsManager instead'CS0618
 // using Photon.Pun.UtilityScripts;
 
-// IPunObservable
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
 
@@ -19,7 +15,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public GameObject lightRealmPlayerPrefab; //prefab for light realm player
 
     public GameObject darkRealmPlayerPrefab; //prefab for dark realm player
-    public Transform[] spawnPoints;
+    public Transform[] spawnPointsLR;
+    public Transform[] spawnPointsDR;
 
     public GameObject roomCamera;
 
@@ -92,6 +89,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         // Get the existing player's ID
         int localPlayerID = PhotonNetwork.LocalPlayer.ActorNumber;
+
         // Find the existing player object
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject player in players)
@@ -106,40 +104,37 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
 
         // Get the existing player's team
-        realm = (string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"];
+        bool isLightRealm = ((string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"] == "Light");
 
-        // Assign the player's team based on the existing team
-        GameObject playerPrefab = realm == "Light" ? lightRealmPlayerPrefab : darkRealmPlayerPrefab;
+        // Assign the player's prefab and spawn point based on the existing team
+        GameObject playerPrefab = DeterminePlayerPrefab(isLightRealm);
+        Transform spawnPoint = DetermineSpawnPoint(isLightRealm);
 
         // Reset their MachinePartsCount to zero
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "MachinePartsCount", 0 } });            
-
-        // Get a random spawn point
-        //TO DO - if realm is dark then spawn at dark spawn point array else spawn at light spawn point array
-        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "MachinePartsCount", 0 } });
 
         // Instantiate the player at the spawn point
         GameObject _player = deployPlayer(playerPrefab, spawnPoint);
 
         setOnScreenPlayerStatsAndVisibility(_player);
-
     }
 
     void SpawnNewPlayer()
     {
         Debug.Log("*** NEW PLAYER JOINING ***");
 
-        //TO DO - if realm is dark then spawn at dark spawn point array else spawn at light spawn point array
-        //TO DO - then make the code into one function for spanwing player
-
         // Set the realm of the player based on the number of players in the room
         bool isLightRealm = PhotonNetwork.PlayerList.Length % 2 == 1;  // Check if the number of players in the room is even
+
         realm = isLightRealm ? "Light" : "Dark";
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "Realm", realm }, { "MachinePartsCount", 0 } });
         Debug.Log("Player [" + nickname + "] assigned to realm [" + realm + "]");
 
-        GameObject playerPrefab = isLightRealm ? lightRealmPlayerPrefab : darkRealmPlayerPrefab;
-        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        // Assign the player's prefab and spawn point
+        GameObject playerPrefab = DeterminePlayerPrefab(isLightRealm);
+        Transform spawnPoint= DetermineSpawnPoint(isLightRealm);
+
+        // Initiliase the player's machine parts count.
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "Realm", realm }, { "MachinePartsCount", 0 } });
 
         // Instantiate the player at the spawn point
         GameObject _player = deployPlayer(playerPrefab, spawnPoint);
@@ -152,6 +147,16 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.InstantiateRoomObject(machine2Prefab.name, machine2Prefab.transform.position, Quaternion.identity);
 
         setOnScreenPlayerStatsAndVisibility(_player);
+    }
+
+    private GameObject DeterminePlayerPrefab(bool isLightRealm)
+    {
+        return isLightRealm ? lightRealmPlayerPrefab : darkRealmPlayerPrefab;
+    }
+
+    private Transform DetermineSpawnPoint(bool isLightRealm)
+    {
+        return isLightRealm ? spawnPointsLR[Random.Range(0, spawnPointsLR.Length)] : spawnPointsDR[Random.Range(0, spawnPointsDR.Length)];
     }
 
     private GameObject deployPlayer(GameObject playerPrefab, Transform spawnPoint)

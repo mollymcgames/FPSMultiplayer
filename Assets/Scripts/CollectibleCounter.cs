@@ -2,7 +2,6 @@ using UnityEngine;
 using Photon.Pun;
 using TMPro;
 using static Photon.Pun.UtilityScripts.PunTeams;
-// using Photon.Pun.UtilityScripts;
 
 
 public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
@@ -36,17 +35,12 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
         //Get the collectible PhotonView
         Debug.Log("[" + actorNumber + "] OnTriggerEnter() for player");
 
-//        bool thisIsMine = false;
         PhotonView collectiblePhotonView = other.GetComponent<PhotonView>();
-//        if (collectiblePhotonView != null)
-//            thisIsMine = collectiblePhotonView.IsMine;
         
         if (other.CompareTag("Collectible") && Time.fixedTime - lastEnteredTime > 1)
         {
             IncrementTeamMachinePartsCount();
             IncrementPlayerMachinePartsCount();
-
-//            string realm = (string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"];
 
             // Only the Master can remove the machine parts from the game.  
             PhotonView photonView2 = other.gameObject.GetComponent<PhotonView>();
@@ -76,7 +70,6 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    //Method to increment the teams machine parts count
     private void IncrementTeamMachinePartsCount()
     {
         int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
@@ -92,7 +85,6 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
         UpdateTeamCollectibleCountText();
     }
 
-    //Method to increment the teams machine parts count
     private void IncrementPlayerMachinePartsCount()
     {
         int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
@@ -127,7 +119,6 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    //Method to update the team collectible count text
     [PunRPC]
     private void UpdateTeamCollectibleCountText()
     {
@@ -161,7 +152,6 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    //Method to update the player collectible count text
     [PunRPC]
     private void UpdatePlayerCollectibleCountText()
     {
@@ -175,8 +165,6 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
 
     private void UpdatePlayerCollectibleCountText(string realm)
     {
-        //playerMachinePartsCount = (int)PhotonNetwork.LocalPlayer.CustomProperties["MachinePartsCount"];
-
         int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
 
         Debug.Log("[" + actorNumber + "] UpdateCollectibleCountText(realm) invoked! realm:" + realm);

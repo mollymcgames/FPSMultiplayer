@@ -372,7 +372,7 @@ GameObject:
   - component: {fileID: 302313025}
   - component: {fileID: 302313024}
   - component: {fileID: 302313023}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: SpawnPointLR1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -442,7 +442,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &334631718
 GameObject:
@@ -559,7 +559,7 @@ GameObject:
   - component: {fileID: 372136763}
   - component: {fileID: 372136762}
   - component: {fileID: 372136761}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: SpawnPointDR1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -624,7 +624,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 372136760}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.58, y: 1.703, z: -12.8}
+  m_LocalPosition: {x: 1.55, y: 52, z: -2.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -914,9 +914,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lightRealmPlayerPrefab: {fileID: 6212037542837207263, guid: 39f8fd33c883b6c4fa3d1c414a06ed5a, type: 3}
   darkRealmPlayerPrefab: {fileID: 6212037542837207263, guid: c32c19f7cbf7df14289dfe25afc4bdfe, type: 3}
-  spawnPoints:
+  spawnPointsLR:
   - {fileID: 302313025}
   - {fileID: 1357426893}
+  spawnPointsDR:
   - {fileID: 372136763}
   roomCamera: {fileID: 491127686}
   nameUI: {fileID: 334631718}
@@ -2284,7 +2285,7 @@ GameObject:
   - component: {fileID: 1357426893}
   - component: {fileID: 1357426892}
   - component: {fileID: 1357426891}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: SpawnPointLR2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2354,7 +2355,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1377464871
 GameObject:
