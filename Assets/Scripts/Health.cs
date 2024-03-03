@@ -14,7 +14,6 @@ public class Health : MonoBehaviourPunCallbacks
 
 
     [PunRPC]
-
     public void TakeDamage(int damage)
     {
         health -= damage;
@@ -27,13 +26,11 @@ public class Health : MonoBehaviourPunCallbacks
             {
                 NetworkManager.instance.RespawnPlayer();
             }
-            // Destroy(gameObject);
 
             if (photonView.IsMine)
             {
                 if (gameObject != null && photonView != null)
                     PhotonNetwork.Destroy(gameObject);
-                // PhotonNetwork.Destroy(gameObject);
             }
             else
             {

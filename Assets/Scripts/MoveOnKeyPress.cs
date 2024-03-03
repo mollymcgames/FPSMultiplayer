@@ -5,52 +5,55 @@ using Photon.Pun;
 
 public class MoveOnKeyPress : MonoBehaviourPun
 {
-    public float yoffset = 52f;
+    public float lrOffset = 52f;
+    public float drOffset = 50f;
 
-    public float doffset = 50f;
-    private bool inFirstRealm = true; //Have a bool to check if we are in the second realm or not
-
-    // Update is called once per frame
     void Update()
     {
-        //If we are in the second realm, we can't go back to the first realm
+        PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("CurrentRealm", out object _currentRealm);
+
+        bool isLightRealm = ((string)_currentRealm == "Light");
+
+        // If we are in the second realm, we can't go back to the first realm
         if (photonView.IsMine)
         {
             if (Input.GetKeyDown(KeyCode.V))
             {
-                if (inFirstRealm)
+                // @TODO This is where a cool off period can be implemented.  Might want to flash a message on screen if attempting
+                // to switch realms when WITHIN the cool off period.
+                if (isLightRealm)
                 {
-                    photonView.RPC("Move", RpcTarget.AllBuffered, yoffset);
+                    PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", "Dark" } });
+                    photonView.RPC("MoveToDR", RpcTarget.AllBuffered, lrOffset);
                     CameraLayersController.switchToDR();
                 }
                 else
                 {
-                    photonView.RPC("MoveDown", RpcTarget.AllBuffered, doffset);
+                    PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", "Light" } });
+                    photonView.RPC("MoveToLR", RpcTarget.AllBuffered, drOffset);
                     CameraLayersController.switchToLR();
                 }
             }
+            else if (Input.GetKeyDown(KeyCode.M))
+            {
+                NetworkManager.SpawnMachineParts();
+            }
         }
-        
     }
 
     [PunRPC]
-
-    void Move(float yoffset)
+    void MoveToDR(float yoffset)
     {
-        Vector3 curerntPos = transform.position;
-        curerntPos.y += yoffset;
-        transform.position = curerntPos;
-        inFirstRealm = false; //If we are in the second realm, set the bool to true
+        Vector3 currentPos = transform.position;
+        currentPos.y += yoffset;
+        transform.position = currentPos;
     }
 
-
-
     [PunRPC]
-    void MoveDown(float doffset)
+    void MoveToLR(float doffset)
     {
-        Vector3 curerntPos = transform.position;
-        curerntPos.y -= doffset;
-        transform.position = curerntPos;
-        inFirstRealm = true; //If we are in the first realm, set the bool to false
+        Vector3 currentPos = transform.position;
+        currentPos.y -= doffset;
+        transform.position = currentPos;
     }
 }

@@ -5,6 +5,7 @@ using Photon.Pun;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
 using TMPro;
+using System;
 //'PunTeams' is obsolete: 'do not use this or add it to the scene. use PhotonTeamsManager instead'CS0618
 // using Photon.Pun.UtilityScripts;
 
@@ -112,6 +113,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         // Reset their MachinePartsCount to zero
         PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "MachinePartsCount", 0 } });
+        // And what realm they're currently in
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", isLightRealm ? "Light" : "Dark"} });
 
         // Instantiate the player at the spawn point
         GameObject _player = deployPlayer(playerPrefab, spawnPoint);
@@ -131,13 +134,25 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         // Assign the player's prefab and spawn point
         GameObject playerPrefab = DeterminePlayerPrefab(isLightRealm);
-        Transform spawnPoint= DetermineSpawnPoint(isLightRealm);
+        Transform spawnPoint = DetermineSpawnPoint(isLightRealm);
 
         // Initiliase the player's machine parts count.
         PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "Realm", realm }, { "MachinePartsCount", 0 } });
 
+        // And what realm they're currently in
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", isLightRealm ? "Light" : "Dark" } });
+
         // Instantiate the player at the spawn point
         GameObject _player = deployPlayer(playerPrefab, spawnPoint);
+
+        SpawnMachineParts();
+
+        setOnScreenPlayerStatsAndVisibility(_player);
+    }
+
+    public static void SpawnMachineParts()
+    {
+        Debug.Log("Spawning machine parts...");
 
         // Instantiate the Machine Parts too (this has to be done by Photon, so that Photon can correctly manage their lifecycle!
         GameObject machine1Prefab = (GameObject)Resources.Load("Machine", typeof(GameObject));
@@ -145,8 +160,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         PhotonNetwork.InstantiateRoomObject(machine1Prefab.name, machine1Prefab.transform.position, Quaternion.identity);
         PhotonNetwork.InstantiateRoomObject(machine2Prefab.name, machine2Prefab.transform.position, Quaternion.identity);
-
-        setOnScreenPlayerStatsAndVisibility(_player);
     }
 
     private GameObject DeterminePlayerPrefab(bool isLightRealm)
@@ -156,7 +169,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     private Transform DetermineSpawnPoint(bool isLightRealm)
     {
-        return isLightRealm ? spawnPointsLR[Random.Range(0, spawnPointsLR.Length)] : spawnPointsDR[Random.Range(0, spawnPointsDR.Length)];
+        return isLightRealm ? spawnPointsLR[UnityEngine.Random.Range(0, spawnPointsLR.Length)] : spawnPointsDR[UnityEngine.Random.Range(0, spawnPointsDR.Length)];
     }
 
     private GameObject deployPlayer(GameObject playerPrefab, Transform spawnPoint)
