@@ -25,7 +25,16 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
     private void OnTriggerEnter(Collider other)
     {
         teamMachinePartsCount = (int)PhotonNetwork.CurrentRoom.CustomProperties["teamMachinePartsCount"];
-        playerMachinePartsCount = (int)PhotonNetwork.LocalPlayer.CustomProperties["MachinePartsCount"];
+        //try get if null 
+        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("MachinePartsCount", out object _playerMachinePartsCount))
+        {
+            playerMachinePartsCount = (int)_playerMachinePartsCount;
+        }
+        else
+        {
+            playerMachinePartsCount = 0;
+        }
+        // playerMachinePartsCount = (int)PhotonNetwork.LocalPlayer.CustomProperties["MachinePartsCount"];
 
         int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
         Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter Collided with: " + other.name);
