@@ -5,8 +5,8 @@ using Photon.Pun;
 
 public class MoveOnKeyPress : MonoBehaviourPun
 {
-    public float lrOffset = 52f;
-    public float drOffset = 50f;
+    private float lrOffset = 190f;
+    private float drOffset = 190f;
 
     void Update()
     {
@@ -42,18 +42,20 @@ public class MoveOnKeyPress : MonoBehaviourPun
     }
 
     [PunRPC]
-    void MoveToDR(float yoffset)
+    void MoveToDR(float yOffset)
     {
+        Debug.Log("Moving to DR, offset: " + lrOffset);
         Vector3 currentPos = transform.position;
-        currentPos.y += yoffset;
+        currentPos.y += lrOffset;
         transform.position = currentPos;
     }
 
     [PunRPC]
-    void MoveToLR(float doffset)
+    void MoveToLR(float dOffset)
     {
+        Debug.Log("Moving to LR, offset: " + drOffset);
         Vector3 currentPos = transform.position;
-        currentPos.y -= doffset;
+        currentPos.y -= drOffset;
         transform.position = currentPos;
     }
 }

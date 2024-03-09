@@ -810,8 +810,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 225a76309c707da4aafc8970a562782c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lrOffset: 52
-  drOffset: 50
 --- !u!114 &-393476389737393540
 MonoBehaviour:
   m_ObjectHideFlags: 0
