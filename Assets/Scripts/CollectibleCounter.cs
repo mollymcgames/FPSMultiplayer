@@ -46,7 +46,7 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
 
         PhotonView collectiblePhotonView = other.GetComponent<PhotonView>();
         
-        if (other.CompareTag("Collectible") && Time.fixedTime - lastEnteredTime > 1)
+        if (photonView.IsMine && other.CompareTag("Collectible") && Time.fixedTime - lastEnteredTime > 1)
         {
             IncrementTeamMachinePartsCount();
             IncrementPlayerMachinePartsCount();

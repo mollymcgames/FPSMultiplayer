@@ -34,10 +34,10 @@ public class MoveOnKeyPress : MonoBehaviourPun
                     CameraLayersController.switchToLR();
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.M))
-            {
-                NetworkManager.SpawnMachineParts();
-            }
+        }
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            NetworkManager.SpawnMachineParts();
         }
     }
 
