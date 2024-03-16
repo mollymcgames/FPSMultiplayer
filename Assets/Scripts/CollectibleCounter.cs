@@ -15,13 +15,6 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
     // The number of collectibles the player has
     private int playerMachinePartsCount = 0;
 
-    private float lastEnteredTime = 0;
-
-    void Awake()
-    {
-        lastEnteredTime = Time.fixedTime;
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         teamMachinePartsCount = (int)PhotonNetwork.CurrentRoom.CustomProperties["teamMachinePartsCount"];
@@ -44,9 +37,9 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
         //Get the collectible PhotonView
         Debug.Log("[" + actorNumber + "] OnTriggerEnter() for player");
 
-        PhotonView collectiblePhotonView = other.GetComponent<PhotonView>();
+        PhotonView collectiblePhotonView = other.GetComponent<PhotonView>();       
         
-        if (photonView.IsMine && other.CompareTag("Collectible") && Time.fixedTime - lastEnteredTime > 1)
+        if (photonView.IsMine && other.CompareTag("Collectible"))
         {
             IncrementTeamMachinePartsCount();
             IncrementPlayerMachinePartsCount();
@@ -55,12 +48,6 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
             PhotonView photonView2 = other.gameObject.GetComponent<PhotonView>();
             photonView.RPC("DestroyMachinePart", RpcTarget.MasterClient, photonView2.ViewID);   
         }
-        else
-        {
-            // This ELSE block can be removed when it's clear double triggering no-longer happens.
-            Debug.Log("Triggered too quickly: " + (Time.fixedTime - lastEnteredTime).ToString());
-        }
-        lastEnteredTime = Time.fixedTime;
     }
 
     [PunRPC]
