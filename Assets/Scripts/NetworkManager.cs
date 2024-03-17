@@ -127,7 +127,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("*** NEW PLAYER JOINING ***");
 
         // Set the realm of the player based on the number of players in the room
-        bool isLightRealm = PhotonNetwork.PlayerList.Length % 2 == 1;  // Check if the number of players in the room is even
+        // bool isLightRealm = PhotonNetwork.PlayerList.Length % 2 == 1;  // Check if the number of players in the room is even
+        bool isLightRealm = PhotonNetwork.PlayerList.Length < 3;
 
         realm = isLightRealm ? "Light" : "Dark";
         Debug.Log("Player [" + nickname + "] assigned to realm [" + realm + "]");

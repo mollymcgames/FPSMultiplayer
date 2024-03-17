@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviourPun
 {
-
+    public Animator characterAnimator;
     public float walkSpeed = 8f;
     public float runSpeed = 14f;
     public float maxVelocityChange = 10f;
@@ -20,10 +21,17 @@ public class PlayerMovement : MonoBehaviour
     private bool jumping;
     private bool grounded = false;
 
+    [PunRPC]
+    void SetIsWalking(bool isWalking)
+    {
+        characterAnimator.SetBool("isWalking", isWalking);
+    }    
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        characterAnimator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -44,6 +52,8 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        // Store whether the player is walking based on the input magnitude
+        bool isWalking = input.magnitude > 0.5f;        
         //jumping
         if (grounded)
         {
@@ -54,9 +64,18 @@ public class PlayerMovement : MonoBehaviour
             else if(input.magnitude > 0.5f)
             {
                 rb.AddForce(CalculateMovement(running ? runSpeed : walkSpeed), ForceMode.VelocityChange);
+                // // Set the isWalking parameter in the Animator Controller
+                characterAnimator.SetBool("isWalking", isWalking);      
+
+                // Inside FixedUpdate, call the RPC methods when needed
+                if (isWalking != characterAnimator.GetBool("isWalking"))
+                {
+                    photonView.RPC("SetIsWalking", RpcTarget.All, isWalking);
+                }                          
             }
             else
             {
+                characterAnimator.SetBool("isWalking", false);
                 Vector3 velocity1 = rb.velocity;
                 velocity1 = new Vector3(velocity1.x * 0.2f, velocity1.y, velocity1.z * 0.2f);
                 rb.velocity = Vector3.Lerp(rb.velocity, velocity1, 0.2f);
