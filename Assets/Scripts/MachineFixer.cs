@@ -12,16 +12,18 @@ public class MachineFixer : MonoBehaviourPun
     private bool isFixing = false;
     private float fixTimer = 0f;
     private bool isBroken = true;
+    private bool isColliding = false;
 
     private void Update()
     {
-        // if (!photonView.IsMine) // Only execute this code for the local player
-        //     return;
+        // Check if the player is in the light realm first before fixing the machine 
+        bool isLightRealm = (string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"] == "Light";
 
-        // Check if the player is near the machine and the machine is broken
-        if (Input.GetKeyDown(interactKey) && IsPlayerNearMachine() && isBroken)
+        // Check if the player is near the machine, the machine is broken, and the player is colliding with it and if the player is in the light realm
+        if (Input.GetKeyDown(interactKey) && isBroken && isColliding && isLightRealm)
         {
-            // Start fixing if the key is pressed and the machine is broken
+            Debug.Log("Start fixing the machine.");
+            // Start fixing if the key is pressed, the machine is broken, and the player is colliding with it
             isFixing = true;
             fixingSlider.gameObject.SetActive(true); // Show the fixing slider
         }
@@ -80,14 +82,27 @@ public class MachineFixer : MonoBehaviourPun
     {
         // You can add visual effects or animations here to indicate the machine is fixed.
         Debug.Log("Machine is fixed for everyone!");
+        // Set machine as fixed
+        isBroken = false;        
     }
 
-    private bool IsPlayerNearMachine()
+    private void OnTriggerEnter(Collider other)
     {
-        // Calculate distance between player and machine
-        float distance = Vector3.Distance(transform.position, transform.position);
+        // Check if the collider belongs to a player
+        if (other.CompareTag("Player"))
+        {
+            // Set the flag to true when the player collides with the machine
+            isColliding = true;
+        }
+    }
 
-        // Check if the player is within interaction distance
-        return distance <= interactionDistance;
+    private void OnTriggerExit(Collider other)
+    {
+        // Check if the collider belongs to a player
+        if (other.CompareTag("Player"))
+        {
+            // Set the flag to false when the player exits the collision with the machine
+            isColliding = false;
+        }
     }
 }
