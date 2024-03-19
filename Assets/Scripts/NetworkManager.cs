@@ -149,6 +149,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         SpawnMachineParts();
 
         setOnScreenPlayerStatsAndVisibility(_player);
+
+        //Spawn the machine to fix
+        SpawnMachineToFix();
     }
 
     public static void SpawnMachineParts()
@@ -161,6 +164,16 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         PhotonNetwork.InstantiateRoomObject(machine1Prefab.name, machine1Prefab.transform.position, Quaternion.identity);
         PhotonNetwork.InstantiateRoomObject(machine2Prefab.name, machine2Prefab.transform.position, Quaternion.identity);
+    }
+
+    public static void SpawnMachineToFix()
+    {
+        Debug.Log("Spawning machine to fix...");
+
+        // Instantiate the Machine to fix (this has to be done by Photon, so that Photon can correctly manage their lifecycle!
+        GameObject machineToFixPrefab = (GameObject)Resources.Load("MachineToFix", typeof(GameObject));
+
+        PhotonNetwork.InstantiateRoomObject(machineToFixPrefab.name, machineToFixPrefab.transform.position, Quaternion.identity);
     }
 
     private GameObject DeterminePlayerPrefab(bool isLightRealm)
