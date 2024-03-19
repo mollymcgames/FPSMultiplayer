@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 
 public class MachineFixer : MonoBehaviourPun
@@ -6,6 +7,7 @@ public class MachineFixer : MonoBehaviourPun
     public float interactionDistance = 2f;
     public KeyCode interactKey = KeyCode.E;
     public float fixingTime = 3f;
+    public Slider fixingSlider; // Reference to the UI slider
 
     private bool isFixing = false;
     private float fixTimer = 0f;
@@ -13,28 +15,44 @@ public class MachineFixer : MonoBehaviourPun
 
     private void Update()
     {
-        // add in a null check to check the playuer is in the scene 
-        if (PhotonNetwork.LocalPlayer != null)
+        // if (!photonView.IsMine) // Only execute this code for the local player
+        //     return;
+
+        // Check if the player is near the machine and the machine is broken
+        if (Input.GetKeyDown(interactKey) && IsPlayerNearMachine() && isBroken)
         {
-            if (!photonView.IsMine)
-                return;
+            // Start fixing if the key is pressed and the machine is broken
+            isFixing = true;
+            fixingSlider.gameObject.SetActive(true); // Show the fixing slider
+        }
 
-            if (Input.GetKeyDown(interactKey) && IsPlayerNearMachine() && isBroken)
+        // Check if the key is released and the fixing process is ongoing
+        if (Input.GetKeyUp(interactKey) && isFixing)
+        {
+            // Stop fixing if the key is released
+            isFixing = false;
+            fixingSlider.gameObject.SetActive(false); // Hide the fixing slider
+            fixTimer = 0f; // Reset the fix timer
+            return; // Exit the update loop
+        }
+
+        if (isFixing)
+        {
+            fixTimer += Time.deltaTime;
+
+            // Update the value of the fixing slider based on the progress
+            fixingSlider.value = fixTimer / fixingTime;
+
+            // Check if fixing time is completed
+            if (fixTimer >= fixingTime)
             {
-                // Start fixing if the machine is broken and the player is nearby
-                isFixing = true;
+                FinishFixingMachine();
             }
-
-            if (isFixing)
-            {
-                fixTimer += Time.deltaTime;
-
-                // Check if fixing time is completed
-                if (fixTimer >= fixingTime)
-                {
-                    FinishFixingMachine();
-                }
-            }
+        }
+        else
+        {
+            // Hide the fixing slider when not fixing
+            fixingSlider.gameObject.SetActive(false);
         }
     }
 
@@ -47,9 +65,12 @@ public class MachineFixer : MonoBehaviourPun
         // Set machine as fixed
         isBroken = false;
 
+        // Hide the fixing slider
+        fixingSlider.gameObject.SetActive(false);
+
         // Log the machine is fixed
         Debug.Log("I AM FIXED NOW!");
-        
+
         // Notify other players using Photon RPC
         photonView.RPC("SetMachineFixed", RpcTarget.All);
     }
