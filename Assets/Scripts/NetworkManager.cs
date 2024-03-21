@@ -128,6 +128,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         // Set the realm of the player based on the number of players in the room
         bool isLightRealm = PhotonNetwork.PlayerList.Length % 2 == 1;  // Check if the number of players in the room is even
+        // bool isLightRealm = PhotonNetwork.PlayerList.Length < 3;
 
         realm = isLightRealm ? "Light" : "Dark";
         Debug.Log("Player [" + nickname + "] assigned to realm [" + realm + "]");
@@ -148,6 +149,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         SpawnMachineParts();
 
         setOnScreenPlayerStatsAndVisibility(_player);
+
+        //Spawn the machine to fix
+        SpawnMachineToFix();
     }
 
     public static void SpawnMachineParts()
@@ -160,6 +164,16 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         PhotonNetwork.InstantiateRoomObject(machine1Prefab.name, machine1Prefab.transform.position, Quaternion.identity);
         PhotonNetwork.InstantiateRoomObject(machine2Prefab.name, machine2Prefab.transform.position, Quaternion.identity);
+    }
+
+    public static void SpawnMachineToFix()
+    {
+        Debug.Log("Spawning machine to fix...");
+
+        // Instantiate the Machine to fix (this has to be done by Photon, so that Photon can correctly manage their lifecycle!
+        GameObject machineToFixPrefab = (GameObject)Resources.Load("MachineToFix", typeof(GameObject));
+
+        PhotonNetwork.InstantiateRoomObject(machineToFixPrefab.name, machineToFixPrefab.transform.position, Quaternion.identity);
     }
 
     private GameObject DeterminePlayerPrefab(bool isLightRealm)
