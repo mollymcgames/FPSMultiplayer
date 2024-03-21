@@ -6,6 +6,7 @@ using ExitGames.Client.Photon;
 using Photon.Realtime;
 using TMPro;
 using System;
+using UnityEngine.UI;
 //'PunTeams' is obsolete: 'do not use this or add it to the scene. use PhotonTeamsManager instead'CS0618
 // using Photon.Pun.UtilityScripts;
 
@@ -23,6 +24,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     [Space]
     public GameObject nameUI;
+    public GameObject playerUIImage;
+    
     public GameObject connectUI;
 
     private string nickname = "unnamed";
@@ -33,6 +36,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     void Awake()
     {
         instance = this;
+        //set the playerUI alpha to 0
+        SetImageAlpha(playerUIImage, 0f);
     }
 
     public void ChangeNickname(string name)
@@ -80,9 +85,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         roomCamera.SetActive(false);
 
         SpawnNewPlayer();
-
         Room currentRoom = PhotonNetwork.CurrentRoom;
-        Debug.Log("current room properties: " + currentRoom.CustomProperties);        
+        Debug.Log("current room properties: " + currentRoom.CustomProperties);    
+        // When the room is joined, make the image visible by setting alpha to 1
+        SetImageAlpha(playerUIImage, 1f);            
     }    
     public void RespawnPlayer()
     {
@@ -199,7 +205,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         // Put name on screen
         TextMeshProUGUI nicknameText = GameObject.Find("Nickname").GetComponent<TextMeshProUGUI>();
-        nicknameText.text = "Name: " + nickname;
+        nicknameText.text = nickname;
+        playerUIImage.SetActive(true);
 
         // Put realm on screen
         TextMeshProUGUI realmText = GameObject.Find("Realm").GetComponent<TextMeshProUGUI>();
@@ -216,4 +223,27 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             CameraLayersController.switchToDR();
         }
     }
+
+    void SetImageAlpha(GameObject obj, float alpha)
+    {
+        // Get the Image component of the GameObject
+        Image image = obj.GetComponent<Image>();
+
+        // If the Image component is found
+        if (image != null)
+        {
+            // Get the current color of the image
+            Color currentColor = image.color;
+
+            // Set the alpha value
+            currentColor.a = alpha;
+
+            // Apply the new color to the image
+            image.color = currentColor;
+        }
+        else
+        {
+            Debug.LogWarning("No Image component found on the GameObject: " + obj.name);
+        }
+    }    
 }
