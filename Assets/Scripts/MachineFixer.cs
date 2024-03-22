@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using TMPro;
 
 public class MachineFixer : MonoBehaviourPun
 {
@@ -13,6 +14,16 @@ public class MachineFixer : MonoBehaviourPun
     private float fixTimer = 0f;
     private bool isBroken = true;
     private bool isColliding = false;
+    public int partsRequired = 1; // Number of parts required to fix the machine
+
+    public TMP_Text partsRequiredText; // Reference to the TMP text object
+
+    private void Start()
+    {
+        // Set the parts required text
+        UpdatePartsRequiredText();
+    }
+
 
     private void Update()
     {
@@ -75,6 +86,11 @@ public class MachineFixer : MonoBehaviourPun
 
         // Notify other players using Photon RPC
         photonView.RPC("SetMachineFixed", RpcTarget.All);
+
+        partsRequired--; // Decrement the parts required to fix the machine
+
+        // Update the parts required text
+        UpdatePartsRequiredText();
     }
 
     [PunRPC]
@@ -104,5 +120,11 @@ public class MachineFixer : MonoBehaviourPun
             // Set the flag to false when the player exits the collision with the machine
             isColliding = false;
         }
+    }
+
+    private void UpdatePartsRequiredText()
+    {
+        // Update the parts required text
+        partsRequiredText.text = "Parts Required: " + partsRequired;
     }
 }
