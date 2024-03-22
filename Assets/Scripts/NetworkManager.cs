@@ -209,8 +209,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         playerUIImage.SetActive(true);
 
         // Put realm on screen
-        TextMeshProUGUI realmText = GameObject.Find("Realm").GetComponent<TextMeshProUGUI>();
-        realmText.text = "Realm: " + realm;
+        // TextMeshProUGUI realmText = GameObject.Find("Realm").GetComponent<TextMeshProUGUI>();
+        // realmText.text = "Realm: " + realm;
 
         if ("Light" == realm)
         {

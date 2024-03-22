@@ -144,7 +144,7 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
             Debug.Log("[" + actorNumber + "] UpdateTeamCollectibleCountText(realm) Updating team machine count text:" + teamMachinePartsCount);
 
             // Update the Team collectible count text
-            teamCollectibleCountText.text = "Team Machine Parts: " + teamMachinePartsCount;
+            teamCollectibleCountText.text = "" + teamMachinePartsCount + " / 2";
         }
     }
 
@@ -174,7 +174,7 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
             Debug.Log("[" + actorNumber + "] UpdateCollectibleCountText(realm) Updating player machine count text:" + playerMachinePartsCount);
 
             // Update the Player collectible count text
-            playerCollectibleCountText.text = "Player Machine Parts: " + playerMachinePartsCount;
+            playerCollectibleCountText.text = "" + playerMachinePartsCount + " / 2";
         }
     }
 
