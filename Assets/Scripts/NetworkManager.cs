@@ -180,6 +180,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         GameObject machineToFixPrefab = (GameObject)Resources.Load("MachineToFix", typeof(GameObject));
 
         PhotonNetwork.InstantiateRoomObject(machineToFixPrefab.name, machineToFixPrefab.transform.position, machineToFixPrefab.transform.rotation);
+        
     }
 
     private GameObject DeterminePlayerPrefab(bool isLightRealm)
@@ -217,6 +218,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             CameraLayersController.switchToLR();
             _player.GetComponent<PhotonView>().RPC("UpdateTeamCollectibleCountText", RpcTarget.AllBufferedViaServer);
             _player.GetComponent<PhotonView>().RPC("UpdatePlayerCollectibleCountText", RpcTarget.AllBufferedViaServer);
+            _player.GetComponent<PhotonView>().RPC("UpdateMachinesFixedCountText", RpcTarget.AllBufferedViaServer);
         }
         else
         {

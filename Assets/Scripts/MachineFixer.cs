@@ -89,6 +89,18 @@ public class MachineFixer : MonoBehaviourPun
 
         partsRequired--; // Decrement the parts required to fix the machine
 
+
+        // TO DO - this will need work when we have multiple machine parts to fix as more machines will be added
+        // Assuming you have a reference to the other GameObject find by tag
+        GameObject otherGameObject = GameObject.FindWithTag("Player");
+        // GameObject otherGameObject = GameObject.Find("CollectibleMachinePart(Clone)");
+
+        // Get the PhotonView component attached to the other GameObject
+        PhotonView otherPhotonView = otherGameObject.GetComponent<PhotonView>();
+
+        otherPhotonView.RPC("UpdateTotalMachinesFixedCount", RpcTarget.All);
+
+
         // Update the parts required text
         UpdatePartsRequiredText();
     }
