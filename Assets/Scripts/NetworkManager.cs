@@ -179,7 +179,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         // Instantiate the Machine to fix (this has to be done by Photon, so that Photon can correctly manage their lifecycle!
         GameObject machineToFixPrefab = (GameObject)Resources.Load("MachineToFix", typeof(GameObject));
 
-        PhotonNetwork.InstantiateRoomObject(machineToFixPrefab.name, machineToFixPrefab.transform.position, Quaternion.identity);
+        PhotonNetwork.InstantiateRoomObject(machineToFixPrefab.name, machineToFixPrefab.transform.position, machineToFixPrefab.transform.rotation);
     }
 
     private GameObject DeterminePlayerPrefab(bool isLightRealm)
