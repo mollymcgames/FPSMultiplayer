@@ -69,6 +69,7 @@ public class MachineFixer : MonoBehaviourPun
         }
     }
 
+
     private void FinishFixingMachine()
     {
         // Reset fix timer and flag
@@ -87,9 +88,9 @@ public class MachineFixer : MonoBehaviourPun
         // Notify other players using Photon RPC
         photonView.RPC("SetMachineFixed", RpcTarget.All);
 
-        partsRequired--; // Decrement the parts required to fix the machine
+        // partsRequired--; // Decrement the parts required to fix the machine
 
-
+        photonView.RPC("DecrementMachineParts", RpcTarget.All);
         // TO DO - this will need work when we have multiple machine parts to fix as more machines will be added
         // Assuming you have a reference to the other GameObject find by tag
         GameObject otherGameObject = GameObject.FindWithTag("Player");
@@ -99,10 +100,11 @@ public class MachineFixer : MonoBehaviourPun
         PhotonView otherPhotonView = otherGameObject.GetComponent<PhotonView>();
 
         otherPhotonView.RPC("UpdateTotalMachinesFixedCount", RpcTarget.All);
+        photonView.RPC("UpdatePartsRequiredText", RpcTarget.All);
 
 
         // Update the parts required text
-        UpdatePartsRequiredText();
+       // UpdatePartsRequiredText();
     }
 
     [PunRPC]
@@ -134,9 +136,19 @@ public class MachineFixer : MonoBehaviourPun
         }
     }
 
-    private void UpdatePartsRequiredText()
+    [PunRPC]
+    public void UpdatePartsRequiredText()
     {
         // Update the parts required text
         partsRequiredText.text = "Parts Required: " + partsRequired;
+    }
+
+    [PunRPC]
+    public void DecrementMachineParts()
+    {
+        partsRequired--; // Decrement the parts required to fix the machine
+
+        // Update the parts required text
+        // UpdatePartsRequiredText();        
     }
 }
