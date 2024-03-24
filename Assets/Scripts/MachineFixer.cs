@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using TMPro;
 
 public class MachineFixer : MonoBehaviourPun
 {
@@ -13,6 +14,16 @@ public class MachineFixer : MonoBehaviourPun
     private float fixTimer = 0f;
     private bool isBroken = true;
     private bool isColliding = false;
+    public int partsRequired = 1; // Number of parts required to fix the machine
+
+    public TMP_Text partsRequiredText; // Reference to the TMP text object
+
+    private void Start()
+    {
+        // Set the parts required text
+        UpdatePartsRequiredText();
+    }
+
 
     private void Update()
     {
@@ -58,6 +69,7 @@ public class MachineFixer : MonoBehaviourPun
         }
     }
 
+
     private void FinishFixingMachine()
     {
         // Reset fix timer and flag
@@ -75,6 +87,24 @@ public class MachineFixer : MonoBehaviourPun
 
         // Notify other players using Photon RPC
         photonView.RPC("SetMachineFixed", RpcTarget.All);
+
+        // partsRequired--; // Decrement the parts required to fix the machine
+
+        photonView.RPC("DecrementMachineParts", RpcTarget.All);
+        // TO DO - this will need work when we have multiple machine parts to fix as more machines will be added
+        // Assuming you have a reference to the other GameObject find by tag
+        GameObject otherGameObject = GameObject.FindWithTag("Player");
+        // GameObject otherGameObject = GameObject.Find("CollectibleMachinePart(Clone)");
+
+        // Get the PhotonView component attached to the other GameObject
+        PhotonView otherPhotonView = otherGameObject.GetComponent<PhotonView>();
+
+        otherPhotonView.RPC("UpdateTotalMachinesFixedCount", RpcTarget.All);
+        photonView.RPC("UpdatePartsRequiredText", RpcTarget.All);
+
+
+        // Update the parts required text
+       // UpdatePartsRequiredText();
     }
 
     [PunRPC]
@@ -104,5 +134,21 @@ public class MachineFixer : MonoBehaviourPun
             // Set the flag to false when the player exits the collision with the machine
             isColliding = false;
         }
+    }
+
+    [PunRPC]
+    public void UpdatePartsRequiredText()
+    {
+        // Update the parts required text
+        partsRequiredText.text = "Parts Required: " + partsRequired;
+    }
+
+    [PunRPC]
+    public void DecrementMachineParts()
+    {
+        partsRequired--; // Decrement the parts required to fix the machine
+
+        // Update the parts required text
+        // UpdatePartsRequiredText();        
     }
 }

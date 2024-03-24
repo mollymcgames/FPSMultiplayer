@@ -2,6 +2,7 @@ using UnityEngine;
 using Photon.Pun;
 using TMPro;
 using static Photon.Pun.UtilityScripts.PunTeams;
+using System.Runtime.CompilerServices;
 
 
 public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
@@ -14,6 +15,8 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
 
     // The number of collectibles the player has
     private int playerMachinePartsCount = 0;
+
+    public int totalMachinesFixed = 0;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -43,6 +46,7 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
         {
             IncrementTeamMachinePartsCount();
             IncrementPlayerMachinePartsCount();
+
 
             // Only the Master can remove the machine parts from the game.  
             PhotonView photonView2 = other.gameObject.GetComponent<PhotonView>();
@@ -144,7 +148,7 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
             Debug.Log("[" + actorNumber + "] UpdateTeamCollectibleCountText(realm) Updating team machine count text:" + teamMachinePartsCount);
 
             // Update the Team collectible count text
-            teamCollectibleCountText.text = "Team Machine Parts: " + teamMachinePartsCount;
+            teamCollectibleCountText.text = "" + teamMachinePartsCount + " / 2";
         }
     }
 
@@ -158,6 +162,8 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
 
         UpdatePlayerCollectibleCountText(realm);
     }
+
+
 
     private void UpdatePlayerCollectibleCountText(string realm)
     {
@@ -174,8 +180,49 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
             Debug.Log("[" + actorNumber + "] UpdateCollectibleCountText(realm) Updating player machine count text:" + playerMachinePartsCount);
 
             // Update the Player collectible count text
-            playerCollectibleCountText.text = "Player Machine Parts: " + playerMachinePartsCount;
+            playerCollectibleCountText.text = "" + playerMachinePartsCount + " / 2";
         }
+    }
+
+    [PunRPC]
+    private void UpdateMachinesFixedCountText()
+    {
+        int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+
+        string realm = (string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"];
+        Debug.Log("[" + actorNumber + "] RPC UpdateMachinesFixedCountText() Updating text for realm: " + realm);
+
+        UpdateMachinesFixedCountText(realm);
+    }
+    
+    private void UpdateMachinesFixedCountText(string realm)
+    {
+        int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+
+        if ("Light" == realm)
+        {
+            // Reference to the TextMeshPro object that will display the team collectible count
+            TextMeshProUGUI machinesFixedCountText = GameObject.Find("MachinesFixedCount").GetComponent<TextMeshProUGUI>();
+
+            Debug.Log("[" + actorNumber + "] UpdateMachinesFixedCountText(realm) Updating player machine count text:" + totalMachinesFixed);
+
+            //have a count of how many MachinesToFix prefabs have been instantiated
+            GameObject[] machinesToFix = GameObject.FindGameObjectsWithTag("MachineToFix");
+
+            // Update the Player collectible count text
+            machinesFixedCountText.text = "" + totalMachinesFixed + " / " + machinesToFix.Length;
+        }
+    }
+
+    [PunRPC]
+    public void UpdateTotalMachinesFixedCount()
+    {
+        int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+
+        Debug.Log("[" + actorNumber + "] UpdateTotalMachinesFixedCount() Updating total machines fixed count:" + totalMachinesFixed);
+
+        totalMachinesFixed++;
+        UpdateMachinesFixedCountText();
     }
 
     // Seems this has to be implemented!!
