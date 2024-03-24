@@ -12,6 +12,7 @@ using UnityEngine.UI;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
+    public GetApiData gs;
 
     public static NetworkManager instance;
     public GameObject lightRealmPlayerPrefab; //prefab for light realm player
@@ -73,6 +74,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         options.CustomRoomProperties.Add("teamMachinePartsCount", 0);
 
         PhotonNetwork.JoinOrCreateRoom("test", roomOptions:options, null);
+        
+        gs.FetchPlayerDataByPunPlayerId(1);
 
         Debug.Log("Joined lobby!");
     }
@@ -90,6 +93,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         // When the room is joined, make the image visible by setting alpha to 1
         SetImageAlpha(playerUIImage, 1f);            
     }    
+
     public void RespawnPlayer()
     {
         Debug.Log("Respawning player: " + nickname);
