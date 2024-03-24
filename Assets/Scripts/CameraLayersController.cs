@@ -11,7 +11,7 @@ internal class CameraLayersController : MonoBehaviourPun
 
     public static void setupCamera()
     {
-        // Get current camera and add the base layers to the mask.
+        // GetPlayer current camera and add the base layers to the mask.
         currentCam = (Camera)FindObjectOfType(typeof(Camera));
         layerMask = (1 << 0);
         layerMask |= (1 << 5);

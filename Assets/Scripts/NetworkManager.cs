@@ -7,12 +7,14 @@ using Photon.Realtime;
 using TMPro;
 using System;
 using UnityEngine.UI;
+using Photon.Pun.Demo.PunBasics;
+using System.Net.Http;
 //'PunTeams' is obsolete: 'do not use this or add it to the scene. use PhotonTeamsManager instead'CS0618
 // using Photon.Pun.UtilityScripts;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
-    public GetApiData gs;
+    public string playerApiUrl;
 
     public static NetworkManager instance;
     public GameObject lightRealmPlayerPrefab; //prefab for light realm player
@@ -65,7 +67,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinLobby();
     }
 
-    public override void OnJoinedLobby()
+    public override async void OnJoinedLobby()
     {
         base.OnJoinedLobby();
 
@@ -74,8 +76,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         options.CustomRoomProperties.Add("teamMachinePartsCount", 0);
 
         PhotonNetwork.JoinOrCreateRoom("test", roomOptions:options, null);
-        
-        gs.FetchPlayerDataByPunPlayerId(1);
+
+/*        PlayerInfo pf = null;        
+        var apiClient = new DatabaseApiClient(playerApiUrl, new JsonSerializationOption());
+        pf = await apiClient.GetPlayer<PlayerInfo>(1);
+
+        // @TODO Temporary usage of the PlayerInfo object. Really would need to use it to help setup the game!
+        TextMeshProUGUI playerGoldCoins = GameObject.Find("PlayerGoldCoins").GetComponent<TextMeshProUGUI>();
+        playerGoldCoins.text =  pf.goldCoins.ToString();*/
 
         Debug.Log("Joined lobby!");
     }
@@ -98,7 +106,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Respawning player: " + nickname);
 
-        // Get the existing player's ID
+        // GetPlayer the existing player's ID
         int localPlayerID = PhotonNetwork.LocalPlayer.ActorNumber;
 
         // Find the existing player object
@@ -114,7 +122,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             }
         }
 
-        // Get the existing player's team
+        // GetPlayer the existing player's team
         bool isLightRealm = ((string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"] == "Light");
 
         // Assign the player's prefab and spawn point based on the existing team
@@ -232,13 +240,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void SetImageAlpha(GameObject obj, float alpha)
     {
-        // Get the Image component of the GameObject
+        // GetPlayer the Image component of the GameObject
         Image image = obj.GetComponent<Image>();
 
         // If the Image component is found
         if (image != null)
         {
-            // Get the current color of the image
+            // GetPlayer the current color of the image
             Color currentColor = image.color;
 
             // Set the alpha value

@@ -54,7 +54,7 @@ public class CameraController : MonoBehaviour
         var targetOrientation = Quaternion.Euler(targetDirection);
         var targetCharacterOrientation = Quaternion.Euler(targetCharacterDirection);
 
-        // Get raw mouse input for a cleaner reading on more sensitive mice.
+        // GetPlayer raw mouse input for a cleaner reading on more sensitive mice.
         mouseDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 
         // Scale input against the sensitivity setting and multiply that against the smoothing value.

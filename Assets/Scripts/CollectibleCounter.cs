@@ -37,7 +37,7 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
         Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter current team machine count: " + teamMachinePartsCount);
         Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter current player machine count: " + playerMachinePartsCount);
 
-        //Get the collectible PhotonView
+        //GetPlayer the collectible PhotonView
         Debug.Log("[" + actorNumber + "] OnTriggerEnter() for player");
 
         PhotonView collectiblePhotonView = other.GetComponent<PhotonView>();       

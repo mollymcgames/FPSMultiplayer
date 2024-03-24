@@ -96,7 +96,7 @@ public class MachineFixer : MonoBehaviourPun
         GameObject otherGameObject = GameObject.FindWithTag("Player");
         // GameObject otherGameObject = GameObject.Find("CollectibleMachinePart(Clone)");
 
-        // Get the PhotonView component attached to the other GameObject
+        // GetPlayer the PhotonView component attached to the other GameObject
         PhotonView otherPhotonView = otherGameObject.GetComponent<PhotonView>();
 
         otherPhotonView.RPC("UpdateTotalMachinesFixedCount", RpcTarget.All);

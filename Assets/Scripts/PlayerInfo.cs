@@ -1,9 +1,9 @@
 ﻿public class PlayerInfo
 {
-    public int id;
-    public string punPlayerId;
-    public string name;
-    public int goldCoins;
-    public string firstLoggedIn;
-    public string lastLoggedIn;
+    public int id { get; set; }
+    public string punPlayerId { get; set; }
+    public string name { get; set; }
+    public int goldCoins { get; set; }
+    public string firstLoggedIn { get; set; }
+    public string lastLoggedIn { get; set; }
 }
