@@ -28,7 +28,11 @@ public class WeaponDamage : MonoBehaviour
     public Animation animation;
     public AnimationClip reloadAnimation;
 
-    void Start()
+	[SerializeField] AudioSource reloadSound;
+    [SerializeField] AudioSource fireSound;
+
+
+	void Start()
     {
         magText.text = mag.ToString();
         amoText.text = ammo + " / " + magAmmo;
@@ -53,18 +57,20 @@ public class WeaponDamage : MonoBehaviour
             amoText.text = ammo + " / " + magAmmo;
 
             Fire();
-        }
+			fireSound.Play();
+		}
 
         if (Input.GetKeyDown(KeyCode.R) && mag > 0)
         {
             Reload();
-        }
+			reloadSound.Play();
+		}
     }
 
     void Reload()
     {
-
-        animation.Play(reloadAnimation.name);
+		
+		animation.Play(reloadAnimation.name);
 
         if (magAmmo > 0)
         {

@@ -12,16 +12,18 @@ public class Health : MonoBehaviourPunCallbacks
 
     public TextMeshProUGUI healthText;
 
-
-    [PunRPC]
+    [SerializeField] AudioSource deathSound;
+	[SerializeField] AudioSource dmgSound;
+	[PunRPC]
     public void TakeDamage(int damage)
     {
         health -= damage;
-
-        healthText.text = health.ToString();
+		dmgSound.Play();
+		healthText.text = health.ToString();
         
         if (health <= 0)
         {
+            deathSound.Play();
             if (isLocalPlayer)
             {
                 NetworkManager.instance.RespawnPlayer();

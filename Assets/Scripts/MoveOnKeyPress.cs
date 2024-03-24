@@ -7,7 +7,7 @@ public class MoveOnKeyPress : MonoBehaviourPun
 {
     private float lrOffset = 190f;
     private float drOffset = 190f;
-
+    [SerializeField] AudioSource switchSound;
     void Update()
     {
         PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("CurrentRealm", out object _currentRealm);
@@ -19,9 +19,10 @@ public class MoveOnKeyPress : MonoBehaviourPun
         {
             if (Input.GetKeyDown(KeyCode.V))
             {
-                // @TODO This is where a cool off period can be implemented.  Might want to flash a message on screen if attempting
-                // to switch realms when WITHIN the cool off period.
-                if (isLightRealm)
+				switchSound.Play();
+				// @TODO This is where a cool off period can be implemented.  Might want to flash a message on screen if attempting
+				// to switch realms when WITHIN the cool off period.
+				if (isLightRealm)
                 {
                     PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", "Dark" } });
                     photonView.RPC("MoveToDR", RpcTarget.AllBuffered, lrOffset);
