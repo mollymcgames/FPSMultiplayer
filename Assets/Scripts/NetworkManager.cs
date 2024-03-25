@@ -77,13 +77,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         PhotonNetwork.JoinOrCreateRoom("test", roomOptions:options, null);
 
-/*        PlayerInfo pf = null;        
+        PlayerInfo pf = null;
         var apiClient = new DatabaseApiClient(playerApiUrl, new JsonSerializationOption());
         pf = await apiClient.GetPlayer<PlayerInfo>(1);
 
         // @TODO Temporary usage of the PlayerInfo object. Really would need to use it to help setup the game!
         TextMeshProUGUI playerGoldCoins = GameObject.Find("PlayerGoldCoins").GetComponent<TextMeshProUGUI>();
-        playerGoldCoins.text =  pf.goldCoins.ToString();*/
+        playerGoldCoins.text = pf.goldCoins.ToString();
 
         Debug.Log("Joined lobby!");
     }
