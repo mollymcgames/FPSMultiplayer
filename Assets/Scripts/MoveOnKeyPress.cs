@@ -5,8 +5,8 @@ using Photon.Pun;
 
 public class MoveOnKeyPress : MonoBehaviourPun
 {
-    private float lrOffset = 190f;
-    private float drOffset = 190f;
+    private float lrOffset = 317f;
+    private float drOffset = 317f;
 
     void Update()
     {
