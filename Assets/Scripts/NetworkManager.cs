@@ -7,11 +7,14 @@ using Photon.Realtime;
 using TMPro;
 using System;
 using UnityEngine.UI;
+using Photon.Pun.Demo.PunBasics;
+using System.Net.Http;
 //'PunTeams' is obsolete: 'do not use this or add it to the scene. use PhotonTeamsManager instead'CS0618
 // using Photon.Pun.UtilityScripts;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
+    public string playerApiUrl;
 
     public static NetworkManager instance;
     public GameObject lightRealmPlayerPrefab; //prefab for light realm player
@@ -64,7 +67,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinLobby();
     }
 
-    public override void OnJoinedLobby()
+    public override async void OnJoinedLobby()
     {
         base.OnJoinedLobby();
 
@@ -73,6 +76,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         options.CustomRoomProperties.Add("teamMachinePartsCount", 0);
 
         PhotonNetwork.JoinOrCreateRoom("test", roomOptions:options, null);
+
+        PlayerInfo pf = null;
+        var apiClient = new DatabaseApiClient(playerApiUrl, new JsonSerializationOption());
+        pf = await apiClient.GetPlayer<PlayerInfo>(1);
+
+        // @TODO Temporary usage of the PlayerInfo object. Really would need to use it to help setup the game!
+        TextMeshProUGUI playerGoldCoins = GameObject.Find("PlayerGoldCoins").GetComponent<TextMeshProUGUI>();
+        playerGoldCoins.text = pf.goldCoins.ToString();
 
         Debug.Log("Joined lobby!");
     }
@@ -90,6 +101,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         // When the room is joined, make the image visible by setting alpha to 1
         SetImageAlpha(playerUIImage, 1f);            
     }    
+
     public void RespawnPlayer()
     {
         Debug.Log("Respawning player: " + nickname);
