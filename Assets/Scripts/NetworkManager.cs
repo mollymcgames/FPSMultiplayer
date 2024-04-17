@@ -52,6 +52,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Connecting to server...");
 
+        PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.ConnectUsingSettings();
 
         nameUI.SetActive(false);
