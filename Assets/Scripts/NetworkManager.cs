@@ -14,6 +14,7 @@ using System.Net.Http;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
+    private Timer timer;
     public string playerApiUrl;
 
     public static NetworkManager instance;
@@ -35,6 +36,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private string realm = "";
 
     private bool spawnlightRealmPlayer = true; //flag to determine which team to spawn next
+
+    public void Start()
+    {
+        Debug.Log("Starting <HI>");
+        timer = GetComponent<Timer>();
+    }
 
     void Awake()
     {
@@ -97,6 +104,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         roomCamera.SetActive(false);
 
         SpawnNewPlayer();
+        timer.timerIsRunning = true;
         Room currentRoom = PhotonNetwork.CurrentRoom;
         Debug.Log("current room properties: " + currentRoom.CustomProperties);    
         // When the room is joined, make the image visible by setting alpha to 1
