@@ -4,17 +4,20 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Timer : MonoBehaviourPun
 {
-    public float timeRemaining = 60 * 10;
+    public float gameRoundDuration = 60 * 10;
     public bool timerIsRunning = false;
+    private float timeRemaining = 0;
 
     private void Start()
     {
+        timeRemaining = gameRoundDuration;
         // Starts the timer automatically
-        timerIsRunning = true;
+        timerIsRunning = false;
     }
 
     void Update()
@@ -31,8 +34,9 @@ public class Timer : MonoBehaviourPun
                 else
                 {
                     Debug.Log("Time has run out!");
-                    timeRemaining = 0;
+                    timeRemaining = gameRoundDuration;
                     timerIsRunning = false;
+                    PhotonNetwork.LoadLevel(1);
                 }
             }
         }
