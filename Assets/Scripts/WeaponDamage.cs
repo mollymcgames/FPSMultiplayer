@@ -85,12 +85,12 @@ public class WeaponDamage : MonoBehaviour
 
         RaycastHit hit;
 
-        if(Physics.Raycast(ray.origin, ray.direction, out hit, 100f))
+        if (Physics.Raycast(ray.origin, ray.direction, out hit, 100f))
         {
 
             PhotonNetwork.Instantiate(hitEffect.name, hit.point, Quaternion.identity);
             
-            if(hit.transform.gameObject.GetComponent<Health>() != null)
+            if (hit.transform.gameObject.GetComponent<Health>() != null)
             {
                 hit.transform.gameObject.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.All, damage);
             }
