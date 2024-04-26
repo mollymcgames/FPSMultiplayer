@@ -66,6 +66,8 @@ public class MoveOnKeyPress : MonoBehaviourPun
     [PunRPC]
     void PlayRealmSwitchVFX(Vector3 position)
     {
+        // Add a downward offset (adjust the value as needed)
+        position -= Vector3.up * 1.2f;            
 
         // Instantiate the VFX Prefab at the specified position and play it
         GameObject vfxObject = PhotonNetwork.Instantiate(realmSwitchVFXPrefab.name, position, Quaternion.identity);
