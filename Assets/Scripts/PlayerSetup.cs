@@ -21,7 +21,6 @@ public class PlayerSetup : MonoBehaviour
     }
 
     [PunRPC]
-
     public void SetName(string name)
     {
         nickName = name;

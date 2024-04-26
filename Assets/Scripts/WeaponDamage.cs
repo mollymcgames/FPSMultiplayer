@@ -92,7 +92,7 @@ public class WeaponDamage : MonoBehaviour
             
             if (hit.transform.gameObject.GetComponent<Health>() != null)
             {
-                hit.transform.gameObject.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.All, damage);
+                hit.transform.gameObject.GetComponent<PhotonView>().RPC("TakeDamage", RpcTarget.All, damage, PhotonNetwork.LocalPlayer.UserId);
             }
         }
     }

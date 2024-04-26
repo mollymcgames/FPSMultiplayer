@@ -7,17 +7,25 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Timer : MonoBehaviourPun
+public class Timer : MonoBehaviourPunCallbacks, IPunObservable
 {
     public float gameRoundDuration = 60 * 10;
     public bool timerIsRunning = false;
-    private float timeRemaining = 0;
+    [SerializeField] private float timeRemaining = 0;
 
     private void Start()
     {
+        Debug.Log("Initiating timer...");
         timeRemaining = gameRoundDuration;
-        // Starts the timer automatically
-        timerIsRunning = false;
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        Debug.Log(">>> This player just left, handing over timer: " + otherPlayer.NickName);
+        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+        {
+            timerIsRunning = true;
+        }
     }
 
     void Update()
@@ -25,10 +33,10 @@ public class Timer : MonoBehaviourPun
         if (PhotonNetwork.LocalPlayer.IsMasterClient)
         {
             if (timerIsRunning)
-            {                
+            {
                 if (timeRemaining > 0)
                 {
-                    timeRemaining -= Time.deltaTime;                    
+                    timeRemaining -= Time.deltaTime;
                     photonView.RPC("DisplayTime", RpcTarget.AllBuffered, timeRemaining);
                 }
                 else
@@ -36,7 +44,7 @@ public class Timer : MonoBehaviourPun
                     Debug.Log("Time has run out!");
                     timeRemaining = gameRoundDuration;
                     timerIsRunning = false;
-                    PhotonNetwork.LoadLevel(1);
+                    PhotonNetwork.LoadLevel(GameUtils.SceneRoundOver);
                 }
             }
         }
@@ -45,12 +53,31 @@ public class Timer : MonoBehaviourPun
     [PunRPC]
     public void DisplayTime(float timeToDisplay)
     {
-        timeToDisplay += 1;
+        if (PhotonNetwork.IsConnectedAndReady)
+        {
+            timeToDisplay += 1;
 
-        float minutes = Mathf.FloorToInt(timeToDisplay / 60);
-        float seconds = Mathf.FloorToInt(timeToDisplay % 60);
+            float minutes = Mathf.FloorToInt(timeToDisplay / 60);
+            float seconds = Mathf.FloorToInt(timeToDisplay % 60);
 
-        TextMeshProUGUI timeText = GameObject.Find("TimerText").GetComponent<TextMeshProUGUI>();
-        timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+            GameObject timerText = GameObject.Find("TimerText");
+            TextMeshProUGUI timeText = null;
+            if (timerText != null)
+                timeText = GameObject.Find("TimerText").GetComponent<TextMeshProUGUI>();
+            if (timeText != null)
+                timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        }
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(timeRemaining);
+        }
+        else
+        {
+            timeRemaining = (float)stream.ReceiveNext();
+        }
     }
 }
