@@ -2,13 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using TMPro;
+using UnityEngine.UI;
+using Unity.VisualScripting;
 
 public class MoveOnKeyPress : MonoBehaviourPun
 {
     private float lrOffset = 317f;
     private float drOffset = 317f;
 
-    public GameObject realmSwitchVFXPrefab; // Reference to the VFX Prefab    
+    public TextMeshProUGUI cooldownText;
+    public GameObject realmSwitchVFXPrefab; // Reference to the VFX Prefab
+
+    private bool canSwitchRealm = true;    
+
+    void Start()
+    {
+        cooldownText.enabled = false; // Disable the cooldown message initially
+    }    
 
     void Update()
     {
@@ -19,7 +30,7 @@ public class MoveOnKeyPress : MonoBehaviourPun
         // If we are in the second realm, we can't go back to the first realm
         if (photonView.IsMine)
         {
-            if (Input.GetKeyDown(KeyCode.V))
+            if (Input.GetKeyDown(KeyCode.V) && canSwitchRealm)
             {
                 // @TODO This is where a cool off period can be implemented.  Might want to flash a message on screen if attempting
                 // to switch realms when WITHIN the cool off period.
@@ -37,12 +48,37 @@ public class MoveOnKeyPress : MonoBehaviourPun
                     CameraLayersController.switchToLR();
                     PlayRealmSwitchVFX(transform.position); // Play the VFX when switching to Dark realm
                 }
+                //Start the cooldown co routine
+                StartCoroutine(StartCooldown());
+            }
+            else if (Input.GetKeyDown(KeyCode.V) && !canSwitchRealm)
+            {
+                Debug.Log("Can't switch realms yet");
+                cooldownText.enabled = true; //Show the cooldown text
+                cooldownText.text = "Cannot switch realms yet. Cooldown is active.";
+                StartCoroutine(HideCooldownMessage());
+                
             }
         }
         if (Input.GetKeyDown(KeyCode.M))
         {
             NetworkManager.SpawnMachineParts();
         }
+    }
+
+    [PunRPC]
+    IEnumerator StartCooldown()
+    {
+        canSwitchRealm = false;
+        yield return new WaitForSeconds(5);
+        canSwitchRealm = true;
+    }
+
+    [PunRPC]
+    IEnumerator HideCooldownMessage()
+    {
+        yield return new WaitForSeconds(2f); //Hide the cooldown message after 2 seconds
+        cooldownText.enabled = false;
     }
 
     [PunRPC]
