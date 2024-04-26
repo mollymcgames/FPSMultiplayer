@@ -8,6 +8,8 @@ public class MoveOnKeyPress : MonoBehaviourPun
     private float lrOffset = 317f;
     private float drOffset = 317f;
 
+    public GameObject realmSwitchVFXPrefab; // Reference to the VFX Prefab    
+
     void Update()
     {
         PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("CurrentRealm", out object _currentRealm);
@@ -26,12 +28,14 @@ public class MoveOnKeyPress : MonoBehaviourPun
                     PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", "Dark" } });
                     photonView.RPC("MoveToDR", RpcTarget.AllBuffered, lrOffset);
                     CameraLayersController.switchToDR();
+                    PlayRealmSwitchVFX(transform.position); // Play the VFX when switching to Dark realm
                 }
                 else
                 {
                     PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", "Light" } });
                     photonView.RPC("MoveToLR", RpcTarget.AllBuffered, drOffset);
                     CameraLayersController.switchToLR();
+                    PlayRealmSwitchVFX(transform.position); // Play the VFX when switching to Dark realm
                 }
             }
         }
@@ -58,4 +62,31 @@ public class MoveOnKeyPress : MonoBehaviourPun
         currentPos.y -= drOffset;
         transform.position = currentPos;
     }
+
+    [PunRPC]
+    void PlayRealmSwitchVFX(Vector3 position)
+    {
+
+        // Instantiate the VFX Prefab at the specified position and play it
+        GameObject vfxObject = PhotonNetwork.Instantiate(realmSwitchVFXPrefab.name, position, Quaternion.identity);
+        if (vfxObject == null)
+        {
+            Debug.LogError("Failed to instantiate VFX prefab!");
+            return;
+        }        
+        // Instantiate the VFX Prefab at the specified position and play it
+        vfxObject.GetComponent<ParticleSystem>().Play();
+
+        // Get the duration of the particle system
+        ParticleSystem particleSystem = vfxObject.GetComponent<ParticleSystem>();
+        float duration = particleSystem.main.duration + particleSystem.main.startLifetime.constantMax;
+
+        // Destroy the VFX object after the duration for all the clients in game
+        StartCoroutine(DestroyVFXObject(vfxObject, duration));
+    }
+    IEnumerator DestroyVFXObject(GameObject vfxObject, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        PhotonNetwork.Destroy(vfxObject);
+    }    
 }
