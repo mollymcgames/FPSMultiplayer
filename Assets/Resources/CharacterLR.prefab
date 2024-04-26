@@ -2046,6 +2046,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 225a76309c707da4aafc8970a562782c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  realmSwitchVFXPrefab: {fileID: 7823327091382468809, guid: b0b4db0ad27cab54eba93e383f66b509, type: 3}
 --- !u!114 &3790639292358744171
 MonoBehaviour:
   m_ObjectHideFlags: 0
