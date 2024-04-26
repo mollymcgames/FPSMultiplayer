@@ -199,8 +199,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         // Instantiate the Machine to fix (this has to be done by Photon, so that Photon can correctly manage their lifecycle!
         GameObject machineToFixPrefab = (GameObject)Resources.Load("MachineToFix", typeof(GameObject));
+        GameObject machineToFixPrefab2 = (GameObject)Resources.Load("MachineToFix2", typeof(GameObject));
 
         PhotonNetwork.InstantiateRoomObject(machineToFixPrefab.name, machineToFixPrefab.transform.position, machineToFixPrefab.transform.rotation);
+        PhotonNetwork.InstantiateRoomObject(machineToFixPrefab2.name, machineToFixPrefab2.transform.position, machineToFixPrefab2.transform.rotation);
         
     }
 
