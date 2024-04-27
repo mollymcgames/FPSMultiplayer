@@ -32,8 +32,6 @@ public class MoveOnKeyPress : MonoBehaviourPun
         {
             if (Input.GetKeyDown(KeyCode.V) && canSwitchRealm)
             {
-                // @TODO This is where a cool off period can be implemented.  Might want to flash a message on screen if attempting
-                // to switch realms when WITHIN the cool off period.
                 if (isLightRealm)
                 {
                     PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", "Dark" } });
@@ -103,7 +101,7 @@ public class MoveOnKeyPress : MonoBehaviourPun
     void PlayRealmSwitchVFX(Vector3 position)
     {
         // Add a downward offset (adjust the value as needed)
-        position -= Vector3.up * 1.2f;            
+        position -= Vector3.up * 1.1f; //Todo - this could be done in a nicer way taking the location of the ground and player into account           
 
         // Instantiate the VFX Prefab at the specified position and play it
         GameObject vfxObject = PhotonNetwork.Instantiate(realmSwitchVFXPrefab.name, position, Quaternion.identity);
