@@ -26,6 +26,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public GameObject roomCamera;
 
+    public GameObject respawnVFXPrefab; //Respawn VFX
+
     [Space]
     public GameObject nameUI;
     public GameObject playerUIImage;
@@ -146,8 +148,38 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         // Instantiate the player at the spawn point
         GameObject _player = deployPlayer(playerPrefab, spawnPoint);
 
+        // Play the respawn VFX
+        PlayRespawnVFX(spawnPoint.position);
+
         setOnScreenPlayerStatsAndVisibility(_player);
     }
+
+
+    [PunRPC]
+    void PlayRespawnVFX(Vector3 position)
+    {
+        //move the position of the vfx down a bit so it appears on the ground
+        position -= Vector3.up * 1.1f; //Todo - this could be done in a nicer way taking the location of the ground and player into account           
+        // Instantiate the respawn VFX ParticleSystem at the specified position for everyone in the network 
+        GameObject vfxObject = PhotonNetwork.Instantiate(respawnVFXPrefab.name, position, Quaternion.identity);
+
+        ParticleSystem vfx = vfxObject.GetComponent<ParticleSystem>();
+        // Play the ParticleSystem
+        vfx.Play();
+
+        // Get the duration of the ParticleSystem's main module
+        float duration = vfx.main.duration + vfx.main.startLifetime.constantMax;
+
+        // Destroy the VFX object after the duration for all the clients in game
+        StartCoroutine(DestroyVFXSpawn(vfxObject, duration));
+    }
+
+    IEnumerator DestroyVFXSpawn(GameObject vfxObject, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        PhotonNetwork.Destroy(vfxObject);
+    }    
+
 
     void SpawnNewPlayer()
     {
