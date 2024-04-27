@@ -139,7 +139,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Transform spawnPoint = DetermineSpawnPoint(isLightRealm);
 
         // Reset their MachinePartsCount to zero
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "MachinePartsCount", 0 } });
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "MachinePartsCount", 0 }, { "silverCoins", 0 } });
         // And what realm they're currently in
         PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", isLightRealm ? "Light" : "Dark"} });
 
@@ -165,7 +165,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Transform spawnPoint = DetermineSpawnPoint(isLightRealm);
 
         // Initiliase the player's machine parts count.
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "Realm", realm }, { "MachinePartsCount", 0 } });
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "Realm", realm }, { "MachinePartsCount", 0 }, { "silverCoins", 0 } });
 
         // And what realm they're currently in
         PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", isLightRealm ? "Light" : "Dark" } });

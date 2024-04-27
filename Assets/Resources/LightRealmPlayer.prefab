@@ -818,6 +818,7 @@ GameObject:
   - component: {fileID: 5362203420072848987}
   - component: {fileID: 4887030258238928685}
   - component: {fileID: 6196911082241714357}
+  - component: {fileID: -1339494633640534209}
   m_Layer: 0
   m_Name: LightRealmPlayer
   m_TagString: Player
@@ -1082,6 +1083,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 225a76309c707da4aafc8970a562782c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cooldownText: {fileID: 0}
+  realmSwitchVFXPrefab: {fileID: 0}
 --- !u!114 &6196911082241714357
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1092,6 +1095,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b08d9821f51db104c8e0a297d7b439e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalMachinesFixed: 0
+--- !u!114 &-1339494633640534209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6101872163128024120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9dfb35f61750e34988126052d5d5d71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &6708598484245641671
