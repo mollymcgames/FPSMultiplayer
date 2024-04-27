@@ -1,4 +1,3 @@
-using ExitGames.Client.Photon;
 using Photon.Pun;
 using System;
 using System.Threading.Tasks;
@@ -9,18 +8,8 @@ public class DatabaseApiClient : MonoBehaviourPunCallbacks
 {
     private readonly ISerializationOption _serializationOption;
     private string apiUrl;
-    private static DatabaseApiClient _client = null;
 
-    public static DatabaseApiClient GetDatabaseApiClient(string apiUrl, ISerializationOption serializationOption)
-    {
-        if (_client == null)
-        {
-            _client = new DatabaseApiClient(apiUrl, new JsonSerializationOption());
-        }
-        return _client;
-    }
-
-    private DatabaseApiClient(string apiUrl, ISerializationOption serializationOption)
+    public DatabaseApiClient(string apiUrl, ISerializationOption serializationOption)
     {
         _serializationOption = serializationOption;
         this.apiUrl = apiUrl;

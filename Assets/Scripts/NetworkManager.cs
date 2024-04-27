@@ -35,10 +35,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private string nickname = "unnamed";
     private string realm = "";
 
-    PlayerInfo pf = new PlayerInfo();
+    private bool spawnlightRealmPlayer = true; //flag to determine which team to spawn next
 
     public void Start()
     {
+        Debug.Log("Starting <HI>");
         timer = GetComponent<Timer>();
     }
 
@@ -79,82 +80,43 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         base.OnJoinedLobby();
 
         var options = new RoomOptions() { };
-        options.PlayerTtl = 2000;
-        options.CleanupCacheOnLeave = true;
         options.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
         options.CustomRoomProperties.Add("teamMachinePartsCount", 0);
 
         PhotonNetwork.JoinOrCreateRoom("test", roomOptions:options, null);
+
+        PlayerInfo pf = null;
+        var apiClient = new DatabaseApiClient(playerApiUrl, new JsonSerializationOption());
+        pf = await apiClient.GetPlayer<PlayerInfo>(1);
+
+        // @TODO Temporary usage of the PlayerInfo object. Really would need to use it to help setup the game!
+        TextMeshProUGUI playerGoldCoins = GameObject.Find("PlayerGoldCoins").GetComponent<TextMeshProUGUI>();
+        playerGoldCoins.text = pf.goldCoins.ToString();
+
+        Debug.Log("Joined lobby!");
     }
 
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
         Debug.Log("Joined room!");
-                
-        Room currentRoom = PhotonNetwork.CurrentRoom;
-        Debug.Log("current room properties: " + currentRoom.CustomProperties);
-        Debug.Log("current room player count: " + currentRoom.PlayerCount);
-
-        SpawnNewPlayer();
-
-        // When the room is joined, make the image visible by setting alpha to 1
-        SetImageAlpha(playerUIImage, 1f);
-
-        if (PhotonNetwork.LocalPlayer.IsMasterClient)
-            timer.timerIsRunning = true;
-    }
-
-    async void SpawnNewPlayer()
-    {
-        Debug.Log("*** NEW PLAYER JOINING ***");
-        Debug.Log(">>> Current player count: " + PhotonNetwork.PlayerList.Length);
-
-        foreach (var playersName in PhotonNetwork.PlayerList)
-        {
-            //tell us each player who is in the room
-            Debug.Log(playersName + " is in the room");
-        }
-
-        var apiClient = DatabaseApiClient.GetDatabaseApiClient(playerApiUrl, new JsonSerializationOption());
-        pf = await apiClient.GetPlayer<PlayerInfo>(1);
-
-        // Set the realm of the player based on the number of players in the room
-        bool isLightRealm = PhotonNetwork.PlayerList.Length % 2 == 1;  // Check if the number of players in the room is even
-
-        realm = isLightRealm ? "Light" : "Dark";
-        Debug.Log("Player [" + nickname + "] assigned to realm [" + realm + "]");
-
-        // Initialised their nickname
-        PhotonNetwork.LocalPlayer.NickName = nickname;
-
-        GameObject _player = DoSpawn(realm);
-
-        setOnScreenPlayerStatsAndVisibility(_player);
-
-        SpawnMachineParts();
-
-        SpawnMachineToFix();
 
         roomCamera.SetActive(false);
-    }
+
+        SpawnNewPlayer();
+        timer.timerIsRunning = true;
+        Room currentRoom = PhotonNetwork.CurrentRoom;
+        Debug.Log("current room properties: " + currentRoom.CustomProperties);    
+        // When the room is joined, make the image visible by setting alpha to 1
+        SetImageAlpha(playerUIImage, 1f);            
+    }    
 
     public void RespawnPlayer()
     {
-        Debug.Log("*** PLAYER POTENTIALLY RESPAWNING ***");
-
-        // 26/04/24 LR respawn decided to be removed.
-        // -- if (IsLightRealm() == true)
-        // --  {
-        // -- GameOver();
-        // -- }
-        // -- else
-        // -- {
-        Debug.Log("Respawning DR player: " + nickname);
+        Debug.Log("Respawning player: " + nickname);
 
         // Get the existing player's ID
         int localPlayerID = PhotonNetwork.LocalPlayer.ActorNumber;
-        string realm = (string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"];
 
         // Find the existing player object
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
@@ -169,28 +131,54 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             }
         }
 
-        GameObject _player = DoSpawn(realm);
+        // Get the existing player's team
+        bool isLightRealm = ((string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"] == "Light");
+
+        // Assign the player's prefab and spawn point based on the existing team
+        GameObject playerPrefab = DeterminePlayerPrefab(isLightRealm);
+        Transform spawnPoint = DetermineSpawnPoint(isLightRealm);
+
+        // Reset their MachinePartsCount to zero
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "MachinePartsCount", 0 } });
+        // And what realm they're currently in
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", isLightRealm ? "Light" : "Dark"} });
+
+        // Instantiate the player at the spawn point
+        GameObject _player = deployPlayer(playerPrefab, spawnPoint);
 
         setOnScreenPlayerStatsAndVisibility(_player);
-        // -- }
     }
 
-    private GameObject DoSpawn(string realm)
+    void SpawnNewPlayer()
     {
-        bool isLightRealm = (realm == PlayerInfo.RealmLight);
+        Debug.Log("*** NEW PLAYER JOINING ***");
+
+        // Set the realm of the player based on the number of players in the room
+        bool isLightRealm = PhotonNetwork.PlayerList.Length % 2 == 1;  // Check if the number of players in the room is even
+        // bool isLightRealm = PhotonNetwork.PlayerList.Length < 3;
+
+        realm = isLightRealm ? "Light" : "Dark";
+        Debug.Log("Player [" + nickname + "] assigned to realm [" + realm + "]");
 
         // Assign the player's prefab and spawn point
         GameObject playerPrefab = DeterminePlayerPrefab(isLightRealm);
         Transform spawnPoint = DetermineSpawnPoint(isLightRealm);
 
-        // Initialise the player's realm, machine parts count and coins.
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "Realm", realm }, { "MachinePartsCount", 0 }, { "silverCoins", 0 } });
+        // Initiliase the player's machine parts count.
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "Realm", realm }, { "MachinePartsCount", 0 } });
 
         // And what realm they're currently in
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", isLightRealm ? PlayerInfo.RealmLight : PlayerInfo.RealmDark } });
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", isLightRealm ? "Light" : "Dark" } });
 
         // Instantiate the player at the spawn point
-        return deployPlayer(playerPrefab, spawnPoint);
+        GameObject _player = deployPlayer(playerPrefab, spawnPoint);
+
+        SpawnMachineParts();
+
+        setOnScreenPlayerStatsAndVisibility(_player);
+
+        //Spawn the machine to fix
+        SpawnMachineToFix();
     }
 
     public static void SpawnMachineParts()
@@ -244,15 +232,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         nicknameText.text = nickname;
         playerUIImage.SetActive(true);
 
-        // Gold coins
-        TextMeshProUGUI playerGoldCoins = GameObject.Find("PlayerGoldCoins").GetComponent<TextMeshProUGUI>();
-        playerGoldCoins.text = pf.goldCoins.ToString();
+        // Put realm on screen
+        // TextMeshProUGUI realmText = GameObject.Find("Realm").GetComponent<TextMeshProUGUI>();
+        // realmText.text = "Realm: " + realm;
 
-        // Silver coins
-        TextMeshProUGUI playerSilverCoins = GameObject.Find("PlayerSilverCoins").GetComponent<TextMeshProUGUI>();
-        playerSilverCoins.text = "0";
-
-        if (PlayerInfo.RealmLight == realm)
+        if ("Light" == realm)
         {
             CameraLayersController.switchToLR();
             _player.GetComponent<PhotonView>().RPC("UpdateTeamCollectibleCountText", RpcTarget.AllBufferedViaServer);
