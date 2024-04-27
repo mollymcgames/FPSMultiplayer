@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,7 @@ public class ButtonBehaviours : MonoBehaviour
 {
     public void OnBackToLobbyButtonPress()
     {
-        SceneManager.LoadScene(0);
+        Debug.Log("I'm going back to the Lobby! : " + PhotonNetwork.LocalPlayer.NickName);
+        PhotonNetwork.LoadLevel(GameUtils.SceneMainGame);
     }
 }
