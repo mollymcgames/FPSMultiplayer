@@ -18,6 +18,8 @@ public class MachineFixer : MonoBehaviourPun
 
     public TMP_Text partsRequiredText; // Reference to the TMP text object
 
+    public int teamMachinePartsCount = 0; //variable to store the team machine parts count 
+
     private void Start()
     {
         // Set the parts required text
@@ -27,11 +29,14 @@ public class MachineFixer : MonoBehaviourPun
 
     private void Update()
     {
+        //Get the team machine parts count from the room properties
+        teamMachinePartsCount = (int)PhotonNetwork.CurrentRoom.CustomProperties["teamMachinePartsCount"];
+
         // Check if the player is in the light realm first before fixing the machine 
         bool isLightRealm = (string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"] == "Light";
 
         // Check if the player is near the machine, the machine is broken, and the player is colliding with it and if the player is in the light realm
-        if (Input.GetKeyDown(interactKey) && isBroken && isColliding && isLightRealm)
+        if (Input.GetKeyDown(interactKey) && isBroken && isColliding && isLightRealm && teamMachinePartsCount > 0)
         {
             Debug.Log("Start fixing the machine.");
             // Start fixing if the key is pressed, the machine is broken, and the player is colliding with it
@@ -101,6 +106,7 @@ public class MachineFixer : MonoBehaviourPun
 
         otherPhotonView.RPC("UpdateTotalMachinesFixedCount", RpcTarget.All);
         photonView.RPC("UpdatePartsRequiredText", RpcTarget.All);
+        photonView.RPC("UpdateTeamCollectibleCountText", RpcTarget.All);
 
 
         // Update the parts required text
@@ -148,7 +154,12 @@ public class MachineFixer : MonoBehaviourPun
     {
         partsRequired--; // Decrement the parts required to fix the machine
 
+        // Decrement the team machine parts count in the room properties for the custom room property 
+        PhotonNetwork.CurrentRoom.CustomProperties["teamMachinePartsCount"] = teamMachinePartsCount - 1;
+
+
         // Update the parts required text
         // UpdatePartsRequiredText();        
     }
+
 }
