@@ -16,4 +16,8 @@ public class PlayerInfo
     public string firstLoggedIn { get; set; }
 
     public string lastLoggedIn { get; set; }
+
+    public string username { get; set; }
+
+    public string password { get; set; }
 }
