@@ -87,13 +87,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         PhotonNetwork.JoinOrCreateRoom("test", roomOptions:options, null);
 
-        PlayerInfo pf = null;
-        var apiClient = new DatabaseApiClient(playerApiUrl, new JsonSerializationOption());
-        pf = await apiClient.GetPlayer<PlayerInfo>(1);
+        // This information now comes from the login.
+        // PlayerInfo pf = null;
+        // var apiClient = new DatabaseApiClient(playerApiUrl, new JsonSerializationOption());
+        // pf = await apiClient.GetPlayer<PlayerInfo>(1);
 
-        // @TODO Temporary usage of the PlayerInfo object. Really would need to use it to help setup the game!
-        TextMeshProUGUI playerGoldCoins = GameObject.Find("PlayerGoldCoins").GetComponent<TextMeshProUGUI>();
-        playerGoldCoins.text = pf.goldCoins.ToString();
+        // // @TODO Temporary usage of the PlayerInfo object. Really would need to use it to help setup the game!
+        // TextMeshProUGUI playerGoldCoins = GameObject.Find("PlayerGoldCoins").GetComponent<TextMeshProUGUI>();
+        // playerGoldCoins.text = pf.goldCoins.ToString();
 
         Debug.Log("Joined lobby!");
     }
@@ -106,6 +107,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         roomCamera.SetActive(false);
 
         SpawnNewPlayer();
+
         timer.timerIsRunning = true;
         Room currentRoom = PhotonNetwork.CurrentRoom;
         Debug.Log("current room properties: " + currentRoom.CustomProperties);    
@@ -183,7 +185,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void SpawnNewPlayer()
     {
-        Debug.Log("*** NEW PLAYER JOINING ***");
+        //FPSGameManager fpm = FPSGameManager.Instance;
+        Debug.Log("*** NEW PLAYER ["+FPSGameManager.Instance.PlayerInfo.name+"] JOINING ***");
+        //Debug.Log("*** NEW PLAYER  JOINING ***");
 
         // Set the realm of the player based on the number of players in the room
         bool isLightRealm = PhotonNetwork.PlayerList.Length % 2 == 1;  // Check if the number of players in the room is even
