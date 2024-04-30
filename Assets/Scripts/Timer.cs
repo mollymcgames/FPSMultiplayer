@@ -36,7 +36,7 @@ public class Timer : MonoBehaviourPun
                     Debug.Log("Time has run out!");
                     timeRemaining = gameRoundDuration;
                     timerIsRunning = false;
-                    PhotonNetwork.LoadLevel(1);
+                    PhotonNetwork.LoadLevel("GameOverScene");
                 }
             }
         }
