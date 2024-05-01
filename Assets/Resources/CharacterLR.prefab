@@ -1957,7 +1957,7 @@ Transform:
   - {fileID: 4655582230229513658}
   - {fileID: 2829745578556876730}
   m_Father: {fileID: 0}
-  m_RootOrder: -2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &212850891836423671
 MeshFilter:
@@ -2337,7 +2337,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 282.08344, y: 27.800018}
+  m_AnchoredPosition: {x: 282.08344, y: 27.800049}
   m_SizeDelta: {x: 110.1669, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1916536559785957186
