@@ -7,6 +7,6 @@ public class ButtonBehaviours : MonoBehaviour
 {
     public void OnBackToLobbyButtonPress()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("FPSScene");   
     }
 }

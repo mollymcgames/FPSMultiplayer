@@ -87,13 +87,14 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         PhotonNetwork.JoinOrCreateRoom("test", roomOptions:options, null);
 
-        PlayerInfo pf = null;
-        var apiClient = new DatabaseApiClient(playerApiUrl, new JsonSerializationOption());
-        pf = await apiClient.GetPlayer<PlayerInfo>(1);
+        // This information now comes from the login.
+        // PlayerInfo pf = null;
+        // var apiClient = new DatabaseApiClient(playerApiUrl, new JsonSerializationOption());
+        // pf = await apiClient.GetPlayer<PlayerInfo>(1);
 
-        // @TODO Temporary usage of the PlayerInfo object. Really would need to use it to help setup the game!
-        TextMeshProUGUI playerGoldCoins = GameObject.Find("PlayerGoldCoins").GetComponent<TextMeshProUGUI>();
-        playerGoldCoins.text = pf.goldCoins.ToString();
+        // // @TODO Temporary usage of the PlayerInfo object. Really would need to use it to help setup the game!
+        // TextMeshProUGUI playerGoldCoins = GameObject.Find("PlayerGoldCoins").GetComponent<TextMeshProUGUI>();
+        // playerGoldCoins.text = pf.goldCoins.ToString();
 
         Debug.Log("Joined lobby!");
     }
@@ -106,6 +107,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         roomCamera.SetActive(false);
 
         SpawnNewPlayer();
+
         timer.timerIsRunning = true;
         Room currentRoom = PhotonNetwork.CurrentRoom;
         Debug.Log("current room properties: " + currentRoom.CustomProperties);    
@@ -183,14 +185,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     void SpawnNewPlayer()
     {
-        Debug.Log("*** NEW PLAYER JOINING ***");
+        //FPSGameManager fpm = FPSGameManager.Instance;
+        Debug.Log("*** NEW PLAYER ["+FPSGameManager.Instance.PlayerInfo.username+"] JOINING ***");
 
         // Set the realm of the player based on the number of players in the room
         bool isLightRealm = PhotonNetwork.PlayerList.Length % 2 == 1;  // Check if the number of players in the room is even
         // bool isLightRealm = PhotonNetwork.PlayerList.Length < 3;
 
         realm = isLightRealm ? "Light" : "Dark";
-        Debug.Log("Player [" + nickname + "] assigned to realm [" + realm + "]");
+        Debug.Log("Player [" + FPSGameManager.Instance.PlayerInfo.username + "] assigned to realm [" + realm + "]");
 
         // Assign the player's prefab and spawn point
         GameObject playerPrefab = DeterminePlayerPrefab(isLightRealm);
@@ -253,7 +256,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         GameObject _player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPoint.position, Quaternion.identity);
         _player.GetComponent<PlayerSetup>().LocalPlayer();
         _player.GetComponent<Health>().isLocalPlayer = true;
-        _player.GetComponent<PhotonView>().RPC("SetName", RpcTarget.AllBuffered, nickname);
+        _player.GetComponent<PhotonView>().RPC("SetName", RpcTarget.AllBuffered, FPSGameManager.Instance.PlayerInfo.username);
         return _player;
     }
 
@@ -261,7 +264,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         // Put name on screen
         TextMeshProUGUI nicknameText = GameObject.Find("Nickname").GetComponent<TextMeshProUGUI>();
-        nicknameText.text = nickname;
+        nicknameText.text = FPSGameManager.Instance.PlayerInfo.username;
         playerUIImage.SetActive(true);
 
         // Put realm on screen
