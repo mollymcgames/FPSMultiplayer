@@ -222,7 +222,23 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
         Debug.Log("[" + actorNumber + "] UpdateTotalMachinesFixedCount() Updating total machines fixed count:" + totalMachinesFixed);
 
         totalMachinesFixed++;
+
+        //add a win debug log line if the Light Realm team manages to fix all the machines
+        if (totalMachinesFixed == 2)
+        {
+            Debug.Log("Light Realm team has fixed all the machines!");
+            SetWinner("Light");
+        }
+
         UpdateMachinesFixedCountText();
+    }
+
+    // Method to set the winner as a room property 
+    private void SetWinner(string winner)
+    {
+        PhotonNetwork.CurrentRoom.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "Winner", winner } });
+        //Check it is being set via debug log line 
+        Debug.Log("Winner is: " + winner);
     }
 
     // Seems this has to be implemented!!

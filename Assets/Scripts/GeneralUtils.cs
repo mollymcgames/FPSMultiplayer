@@ -17,7 +17,19 @@ public class GeneralUtils : MonoBehaviour
         WakeMouse();
         DisconnectFromGame();
         // Set the text value of "RoundWonByText" to theWinner
-        UpdateRoundWonByText();    
+        UpdateRoundWonByText();
+
+        // Debug log to print out the entire custom properties
+        Debug.Log("Custom Properties in general urils is: " + PhotonNetwork.CurrentRoom.CustomProperties);
+
+
+        //check if the winner has been set in the room proerties
+        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("Winner"))
+        {
+            theWinner = (string)PhotonNetwork.CurrentRoom.CustomProperties["Winner"];
+            Debug.Log("The winner in general utils is: " + PhotonNetwork.CurrentRoom.CustomProperties["Winner"]);
+            UpdateRoundWonByText();
+        } 
     }
 
     // Update is called once per frame
