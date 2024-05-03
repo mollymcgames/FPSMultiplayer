@@ -16,17 +16,4 @@ public class RegisterUser : MonoBehaviour
             StartCoroutine(Main.instance.Web.RegisterUser(NewUsernameInput.text, NewUserPasswordInput.text));
         });
     }
-
-
-
-
-
-   
-
-
-// Update is called once per frame
-void Update()
-    {
-        
-    }
 }

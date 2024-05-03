@@ -17,10 +17,4 @@ public class Login : MonoBehaviour
             StartCoroutine ( Main.instance.Web.Login(UsernameInput.text, PasswordInput.text));
       });
    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
