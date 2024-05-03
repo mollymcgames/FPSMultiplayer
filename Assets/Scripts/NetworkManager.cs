@@ -9,6 +9,7 @@ using System;
 using UnityEngine.UI;
 using Photon.Pun.Demo.PunBasics;
 using System.Net.Http;
+using Newtonsoft.Json;
 //'PunTeams' is obsolete: 'do not use this or add it to the scene. use PhotonTeamsManager instead'CS0618
 // using Photon.Pun.UtilityScripts;
 
@@ -41,8 +42,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public void Start()
     {
-        Debug.Log("Starting <HI>");
         timer = GetComponent<Timer>();
+
+        if (FPSGameManager.Instance.PlayerInfo.reloadRequired == true)
+        {
+            StartCoroutine(Main.instance.Web.RefreshUser(FPSGameManager.Instance.PlayerInfo.id));
+        }
     }
 
     void Awake()
@@ -102,7 +107,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
-        Debug.Log("Joined room!");
+        Debug.Log("Joined room!");     
 
         roomCamera.SetActive(false);
 
@@ -195,15 +200,21 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         realm = isLightRealm ? "Light" : "Dark";
         Debug.Log("Player [" + FPSGameManager.Instance.PlayerInfo.username + "] assigned to realm [" + realm + "]");
 
+        // Set their nickname (username)
+        PhotonNetwork.LocalPlayer.NickName = FPSGameManager.Instance.PlayerInfo.username;
+
         // Assign the player's prefab and spawn point
         GameObject playerPrefab = DeterminePlayerPrefab(isLightRealm);
         Transform spawnPoint = DetermineSpawnPoint(isLightRealm);
 
-        // Initiliase the player's machine parts count.
-        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "Realm", realm }, { "MachinePartsCount", 0 }, { "silverCoins", 0 } });
+        // Initiliase the player's machine parts and coins counts
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "Realm", realm }, { "MachinePartsCount", 0 }, { "silverCoins", 0 }, { "goldCoins", FPSGameManager.Instance.PlayerInfo.goldCoins } });
 
         // And what realm they're currently in
         PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", isLightRealm ? "Light" : "Dark" } });
+
+        // And their player info id!
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "PlayerInfoId", FPSGameManager.Instance.PlayerInfo.id } });
 
         // Instantiate the player at the spawn point
         GameObject _player = deployPlayer(playerPrefab, spawnPoint);
@@ -257,6 +268,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         _player.GetComponent<PlayerSetup>().LocalPlayer();
         _player.GetComponent<Health>().isLocalPlayer = true;
         _player.GetComponent<PhotonView>().RPC("SetName", RpcTarget.AllBuffered, FPSGameManager.Instance.PlayerInfo.username);
+
+        TextMeshProUGUI playerGoldCoins = GameObject.Find("PlayerGoldCoins").GetComponent<TextMeshProUGUI>();
+        playerGoldCoins.text = FPSGameManager.Instance.PlayerInfo.goldCoins.ToString();
+
         return _player;
     }
 

@@ -13,11 +13,17 @@ public class Web : MonoBehaviour
 {
     public String apiUrl;
 
-    IEnumerator GetUser(string username, string password)
+    private void Start()
     {
-        using (UnityWebRequest www = UnityWebRequest.Post(apiUrl+"/player", "{ \"username\": \""+username+"\", \"password\": \""+password+"\" }", "application/json"))
+        FPSGameManager.Instance.apiUrl = apiUrl;
+    }
+
+    //public IEnumerator RefreshUser(int userId, Action<string> callback = null)
+    public IEnumerator RefreshUser(int userId)
+    {
+        using (UnityWebRequest www = UnityWebRequest.Get(FPSGameManager.Instance.apiUrl + "/player/" + userId))
         {
-            yield return www.Send();
+            yield return www.SendWebRequest();
 
             if (www.isNetworkError || www.isHttpError)
             {
@@ -26,8 +32,8 @@ public class Web : MonoBehaviour
             else
             {
                 Debug.Log(www.downloadHandler.text);
-
-                byte[] results = www.downloadHandler.data;
+                string response = www.downloadHandler.text.Trim(); // Trim to remove any extra whitespace
+                FPSGameManager.Instance.PlayerInfo = JsonConvert.DeserializeObject<PlayerInfo>(response);
             }
         }
     }
@@ -113,6 +119,30 @@ public class Web : MonoBehaviour
 
             }
             
+        }
+    }
+
+    public IEnumerator UpdatePlayerInfo(PlayerInfo playerInfo)
+    {
+        // JUST UPDATES GOLD COINS FOR NOW!
+        using (UnityWebRequest www = UnityWebRequest.Post(FPSGameManager.Instance.apiUrl + "/player/" + playerInfo.id, "{ \"goldCoins\": \"" + playerInfo.goldCoins + "\"}", "application/json"))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.isNetworkError || www.isHttpError)
+            {
+                Debug.LogError(www.error);
+            }
+            else
+            {
+                Debug.Log(www.downloadHandler.text);
+                // Handle the response from the server
+                string response = www.downloadHandler.text.Trim(); // Trim to remove any extra whitespace
+                if (www.responseCode != 200)
+                {
+                    Debug.Log("Ooops, didn't save: " + response);
+                }
+            }
         }
     }
 }
