@@ -8,20 +8,15 @@ using System;
 public class GeneralUtils : MonoBehaviour
 {
 
-    // public TextMeshProUGUI roundWonByText;
-    //define the winner string to say "dark" or "light" won the game
+    //By default the winner is Dark 
     public string theWinner = "Dark";
-    // Start is called before the first frame update
+
     void Start()
     {
         WakeMouse();
         DisconnectFromGame();
         // Set the text value of "RoundWonByText" to theWinner
         UpdateRoundWonByText();
-
-        // Debug log to print out the entire custom properties
-        Debug.Log("Custom Properties in general urils is: " + PhotonNetwork.CurrentRoom.CustomProperties);
-
 
         //check if the winner has been set in the room proerties
         if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("Winner"))
@@ -30,12 +25,6 @@ public class GeneralUtils : MonoBehaviour
             Debug.Log("The winner in general utils is: " + PhotonNetwork.CurrentRoom.CustomProperties["Winner"]);
             UpdateRoundWonByText();
         } 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
     void WakeMouse()
     {

@@ -10,8 +10,6 @@ public class Menu : MonoBehaviourPun
     public void PlayGame()
      {
 
-      //SceneManager.LoadSceneAsync(1);
-
       PhotonNetwork.LoadLevel("FPSScene");
     }
    

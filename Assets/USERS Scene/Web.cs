@@ -54,7 +54,7 @@ public class Web : MonoBehaviour
                     feedbackText.text = ""; // Optionally clear or set a success message
 
                     // Store the logged in player info into the Game Manager for use in the next scene.
-                    FPSGameManager.Instance.PlayerInfo = JsonConvert.DeserializeObject<PlayerInfo>(response); //JsonUtility.FromJson<PlayerInfo>(response);
+                    FPSGameManager.Instance.PlayerInfo = JsonConvert.DeserializeObject<PlayerInfo>(response);
                     
 
                     SceneManager.LoadSceneAsync(1);
@@ -95,7 +95,6 @@ public class Web : MonoBehaviour
                Debug.Log(www.downloadHandler.text);
                 // Handle the response from the server
                 string response = www.downloadHandler.text.Trim(); // Trim to remove any extra whitespace
-                //if (response == "New record created successfully")
                 if (www.responseCode == 201)
                 {
                     Debug.Log("Registration successful");                   
