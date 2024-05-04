@@ -8,6 +8,8 @@ using Unity.VisualScripting;
 
 public class MoveOnKeyPress : MonoBehaviourPun
 {
+    public AudioClip realmSwitch;
+
     private float lrOffset = 317f;
     private float drOffset = 317f;
 
@@ -32,6 +34,11 @@ public class MoveOnKeyPress : MonoBehaviourPun
         {
             if (Input.GetKeyDown(KeyCode.V) && canSwitchRealm)
             {
+                AudioSource mainCameraAudioSource = gameObject.GetComponent<AudioSource>();
+                mainCameraAudioSource.clip = realmSwitch;
+                mainCameraAudioSource.loop = false;
+                mainCameraAudioSource.Play();
+
                 if (isLightRealm)
                 {
                     PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "CurrentRealm", "Dark" } });
