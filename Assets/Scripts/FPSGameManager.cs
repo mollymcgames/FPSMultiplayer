@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 public class FPSGameManager : MonoBehaviour
 {
     public static FPSGameManager Instance;
+
+    public string apiUrl;
 
     public PlayerInfo PlayerInfo;
     

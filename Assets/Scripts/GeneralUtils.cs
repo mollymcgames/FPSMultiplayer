@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System;
+using Photon.Realtime;
+using UnityEngine.Networking;
 
 public class GeneralUtils : MonoBehaviour
 {
@@ -24,7 +26,27 @@ public class GeneralUtils : MonoBehaviour
             theWinner = (string)PhotonNetwork.CurrentRoom.CustomProperties["Winner"];
             Debug.Log("The winner in general utils is: " + PhotonNetwork.CurrentRoom.CustomProperties["Winner"]);
             UpdateRoundWonByText();
-        } 
+        }
+
+        Dictionary<int, Player> playerList = PhotonNetwork.CurrentRoom.Players;
+        foreach (var player in playerList)
+        {
+            Player nextPlayer = player.Value;
+            Debug.Log("Player "+nextPlayer.NickName+"'s realm is: " + nextPlayer.CustomProperties["Realm"]);
+            if ((string)nextPlayer.CustomProperties["Realm"] == theWinner)
+            {
+                int playerInfoId = (int)nextPlayer.CustomProperties["PlayerInfoId"];
+                int playerInfoGoldCoins = (int)nextPlayer.CustomProperties["goldCoins"];
+                playerInfoGoldCoins += GoldCoinCalculator.CalculateGoldCoinReturn(GoldCoinCalculator.GoldEarners.teamWon);
+                PlayerInfo updatedPlayerInfo = new PlayerInfo();
+                updatedPlayerInfo.id = playerInfoId;
+                updatedPlayerInfo.goldCoins = playerInfoGoldCoins;
+                Debug.Log("Updating player with id: " + updatedPlayerInfo.id);
+                StartCoroutine (Main.instance.Web.UpdatePlayerInfo(updatedPlayerInfo));
+            }
+        }
+
+        FPSGameManager.Instance.PlayerInfo.reloadRequired = true;
     }
     void WakeMouse()
     {

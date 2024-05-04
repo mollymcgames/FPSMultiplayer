@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class Menu : MonoBehaviourPun
 {
     public Login Login;
+
     public void PlayGame()
      {
 

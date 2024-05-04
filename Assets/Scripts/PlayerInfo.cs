@@ -3,6 +3,8 @@ public class PlayerInfo
     public static string RealmDark = "Dark";
     public static string RealmLight = "Light";
 
+    public bool reloadRequired = false;
+
     public int id { get; set; }
 
     public string punPlayerId { get; set; }
@@ -20,4 +22,5 @@ public class PlayerInfo
     public string username { get; set; }
 
     public string password { get; set; }
+
 }
