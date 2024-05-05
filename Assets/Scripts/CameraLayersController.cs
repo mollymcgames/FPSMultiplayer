@@ -9,6 +9,7 @@ internal class CameraLayersController : MonoBehaviourPun
     private static int layerMask = 0;
     private static Camera currentCam;
 
+    [System.Obsolete]
     public static void setupCamera()
     {
         // Get current camera and add the base layers to the mask.
@@ -17,6 +18,7 @@ internal class CameraLayersController : MonoBehaviourPun
         layerMask |= (1 << 5);
     }
 
+    [System.Obsolete]
     public static void switchToLR()
     {
         if (currentCam == null) 
@@ -29,6 +31,7 @@ internal class CameraLayersController : MonoBehaviourPun
         currentCam.cullingMask = layerMask;
     }
 
+    [System.Obsolete]
     public static void switchToDR()
     {
         if (currentCam == null)

@@ -39,8 +39,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private string nickname = "unnamed";
     private string realm = "";
 
-    private bool spawnlightRealmPlayer = true; //flag to determine which team to spawn next
+    // private bool spawnlightRealmPlayer = true; //flag to determine which team to spawn next
 
+    [Obsolete]
     public void Start()
     {
         timer = GetComponent<Timer>();
@@ -87,7 +88,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinLobby();
     }
 
-    public override async void OnJoinedLobby()
+    public override void OnJoinedLobby()
     {
         base.OnJoinedLobby();
 
@@ -101,7 +102,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         options.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
         options.CustomRoomProperties.Add("teamMachinePartsCount", 0);
 
-        PhotonNetwork.JoinOrCreateRoom("test", roomOptions:options, null);
+        PhotonNetwork.JoinOrCreateRoom("test", roomOptions: options, null);
 
         // This information now comes from the login.
         // PlayerInfo pf = null;
@@ -115,6 +116,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("Joined lobby!");
     }
 
+    [Obsolete]
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
@@ -129,8 +131,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("current room properties: " + currentRoom.CustomProperties);    
         // When the room is joined, make the image visible by setting alpha to 1
         SetImageAlpha(playerUIImage, 1f);            
-    }    
+    }
 
+    [Obsolete]
     public void RespawnPlayer()
     {
         Debug.Log("Respawning player: " + nickname);
@@ -196,9 +199,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(duration);
         PhotonNetwork.Destroy(vfxObject);
-    }    
+    }
 
-
+    [Obsolete]
     void SpawnNewPlayer()
     {
         //FPSGameManager fpm = FPSGameManager.Instance;
@@ -286,6 +289,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         return _player;
     }
 
+    [Obsolete]
     private void setOnScreenPlayerStatsAndVisibility(GameObject _player)
     {
         // Put name on screen

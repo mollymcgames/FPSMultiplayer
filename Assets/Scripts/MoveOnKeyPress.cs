@@ -21,8 +21,9 @@ public class MoveOnKeyPress : MonoBehaviourPun
     void Start()
     {
         cooldownText.enabled = false; // Disable the cooldown message initially
-    }    
+    }
 
+    [System.Obsolete]
     void Update()
     {
         PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("CurrentRealm", out object _currentRealm);

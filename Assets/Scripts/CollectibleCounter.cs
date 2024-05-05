@@ -1,8 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
 using TMPro;
-using static Photon.Pun.UtilityScripts.PunTeams;
-using System.Runtime.CompilerServices;
 
 
 public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
@@ -18,24 +16,11 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
 
     public int totalMachinesFixed = 0;
 
+    public AudioClip pickupPartsSound;// = "Assets/Resources/audio/COMMON-actions-pickup-parts.mp3";    
+
     private void OnTriggerEnter(Collider other)
     {
-        teamMachinePartsCount = (int)PhotonNetwork.CurrentRoom.CustomProperties["teamMachinePartsCount"];
-        //try get if null 
-        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("MachinePartsCount", out object _playerMachinePartsCount))
-        {
-            playerMachinePartsCount = (int)_playerMachinePartsCount;
-        }
-        else
-        {
-            playerMachinePartsCount = 0;
-        }
-        // playerMachinePartsCount = (int)PhotonNetwork.LocalPlayer.CustomProperties["MachinePartsCount"];
-
         int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
-        Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter Collided with: " + other.name);
-        Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter current team machine count: " + teamMachinePartsCount);
-        Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter current player machine count: " + playerMachinePartsCount);
 
         //Get the collectible PhotonView
         Debug.Log("[" + actorNumber + "] OnTriggerEnter() for player");
@@ -44,6 +29,25 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
         
         if (photonView.IsMine && other.CompareTag("Collectible"))
         {
+            teamMachinePartsCount = (int)PhotonNetwork.CurrentRoom.CustomProperties["teamMachinePartsCount"];
+            //try get if null 
+            if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("MachinePartsCount", out object _playerMachinePartsCount))
+            {
+                playerMachinePartsCount = (int)_playerMachinePartsCount;
+            }
+            else
+            {
+                playerMachinePartsCount = 0;
+            }
+            // playerMachinePartsCount = (int)PhotonNetwork.LocalPlayer.CustomProperties["MachinePartsCount"];
+            Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter Collided with: " + other.name);
+            Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter current team machine count: " + teamMachinePartsCount);
+            Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter current player machine count: " + playerMachinePartsCount);
+
+            AudioSource mainCameraAudioSource = gameObject.GetComponent<AudioSource>();
+            mainCameraAudioSource.clip = pickupPartsSound;
+            mainCameraAudioSource.Play();
+
             IncrementTeamMachinePartsCount();
             IncrementPlayerMachinePartsCount();
 

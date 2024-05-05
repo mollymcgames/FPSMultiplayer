@@ -16,6 +16,7 @@ public class GeneralUtils : MonoBehaviour
     public AudioClip theWinnerAudio;
     public AudioClip theLoserAudio;
 
+    [Obsolete]
     void Start()
     {
         WakeMouse();

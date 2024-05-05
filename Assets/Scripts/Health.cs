@@ -15,6 +15,7 @@ public class Health : MonoBehaviourPunCallbacks
 
 
     [PunRPC]
+    [Obsolete]
     public void TakeDamage(int damage, string userIdOfAttackingPlayer)
     {
         Debug.Log("Taking damage from: " + userIdOfAttackingPlayer);

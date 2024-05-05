@@ -10,6 +10,7 @@ public class RegisterUser : MonoBehaviour
     public InputField NewUserPasswordInput;
     public Button SubmitButton;
 
+    [System.Obsolete]
     void Start()
     {
         SubmitButton.onClick.AddListener(() =>

@@ -19,6 +19,7 @@ public class Web : MonoBehaviour
     }
 
     //public IEnumerator RefreshUser(int userId, Action<string> callback = null)
+    [Obsolete]
     public IEnumerator RefreshUser(int userId)
     {
         using (UnityWebRequest www = UnityWebRequest.Get(FPSGameManager.Instance.apiUrl + "/player/" + userId))
@@ -39,6 +40,8 @@ public class Web : MonoBehaviour
     }
     
     public Text feedbackText;
+
+    [Obsolete]
     public IEnumerator Login(string username, string password)
     {
         using (UnityWebRequest www = UnityWebRequest.Post(apiUrl+"/playerLogin", "{ \"username\": \""+username+"\", \"password\": \""+password+"\" }", "application/json"))        
@@ -81,6 +84,8 @@ public class Web : MonoBehaviour
     }
 
     public Text feedbackText2;
+
+    [Obsolete]
     public IEnumerator RegisterUser(string username, string password)
     {
         Debug.Log("Creating user at this API:"+apiUrl+"/player");
@@ -122,6 +127,7 @@ public class Web : MonoBehaviour
         }
     }
 
+    [Obsolete]
     public IEnumerator UpdatePlayerInfo(PlayerInfo playerInfo)
     {
         // JUST UPDATES GOLD COINS FOR NOW!

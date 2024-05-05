@@ -9,6 +9,20 @@ public class StartMenuController : MonoBehaviour
     public AudioClip clipUiLoading;
     public AudioClip clipUiLogout;
     public AudioClip clipUiExit;
+    public AudioClip clipMenuMusic;
+
+
+    private void Start()
+    {
+        if (FPSGameManager.Instance.PlayerInfo.reloadRequired == true)
+        {
+            AudioSource mainCameraAudioSource = gameObject.GetComponent<AudioSource>();
+            mainCameraAudioSource.clip = clipMenuMusic;
+            mainCameraAudioSource.loop = true;
+            mainCameraAudioSource.Play();
+            DontDestroyOnLoad(mainCameraAudioSource);
+        }
+    }
 
     public void StartGame()
     {
@@ -23,8 +37,10 @@ public class StartMenuController : MonoBehaviour
     {
         AudioSource mainCameraAudioSource = gameObject.GetComponent<AudioSource>();
         mainCameraAudioSource.clip = clipUiLogout;
+        mainCameraAudioSource.loop = false;
         mainCameraAudioSource.Play();
-        FPSGameManager.Instance.PlayerInfo = null;
+        if (GameObject.Find("FPSGameManager"))
+            FPSGameManager.Instance.PlayerInfo = null;
 
         // Stop any menu music now!
         Destroy(GameObject.Find("MainMenuCamera"));
