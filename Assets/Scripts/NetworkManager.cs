@@ -10,6 +10,7 @@ using UnityEngine.UI;
 using Photon.Pun.Demo.PunBasics;
 using System.Net.Http;
 using Newtonsoft.Json;
+using UnityEngine.SceneManagement;
 //'PunTeams' is obsolete: 'do not use this or add it to the scene. use PhotonTeamsManager instead'CS0618
 // using Photon.Pun.UtilityScripts;
 
@@ -38,7 +39,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private string nickname = "unnamed";
     private string realm = "";
 
-    private bool spawnlightRealmPlayer = true; //flag to determine which team to spawn next
+    // private bool spawnlightRealmPlayer = true; //flag to determine which team to spawn next
 
     public void Start()
     {
@@ -48,6 +49,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             StartCoroutine(Main.instance.Web.RefreshUser(FPSGameManager.Instance.PlayerInfo.id));
         }
+        FPSGameManager.Instance.PlayerInfo.reloadRequired = false;
+
+        // This is now automatic, as this scene now enters from the "MainMenu" scene.
+        JoinRoomButtonPressed();
     }
 
     void Awake()
@@ -82,15 +87,21 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinLobby();
     }
 
-    public override async void OnJoinedLobby()
+    public override void OnJoinedLobby()
     {
         base.OnJoinedLobby();
+
+        // Stop any menu music now!
+        if (SceneManager.GetActiveScene().name == "FPSScene")
+        {
+            Destroy(GameObject.Find("MenuMusic"));
+        }
 
         var options = new RoomOptions() { };
         options.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
         options.CustomRoomProperties.Add("teamMachinePartsCount", 0);
 
-        PhotonNetwork.JoinOrCreateRoom("test", roomOptions:options, null);
+        PhotonNetwork.JoinOrCreateRoom("test", roomOptions: options, null);
 
         // This information now comes from the login.
         // PlayerInfo pf = null;
@@ -103,7 +114,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         Debug.Log("Joined lobby!");
     }
-
+    
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
@@ -118,7 +129,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         Debug.Log("current room properties: " + currentRoom.CustomProperties);    
         // When the room is joined, make the image visible by setting alpha to 1
         SetImageAlpha(playerUIImage, 1f);            
-    }    
+    }
 
     public void RespawnPlayer()
     {
@@ -185,8 +196,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(duration);
         PhotonNetwork.Destroy(vfxObject);
-    }    
-
+    }
 
     void SpawnNewPlayer()
     {

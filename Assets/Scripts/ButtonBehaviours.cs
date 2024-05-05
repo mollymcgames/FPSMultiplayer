@@ -7,6 +7,7 @@ public class ButtonBehaviours : MonoBehaviour
 {
     public void OnBackToLobbyButtonPress()
     {
-        SceneManager.LoadScene("FPSScene");   
+        FPSGameManager.Instance.PlayerInfo.reloadRequired = true;
+        SceneManager.LoadScene("StartMenu");
     }
 }

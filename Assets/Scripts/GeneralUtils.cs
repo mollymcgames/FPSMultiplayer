@@ -13,6 +13,10 @@ public class GeneralUtils : MonoBehaviour
     //By default the winner is Dark 
     public string theWinner = "Dark";
 
+    public AudioClip theWinnerAudio;
+    public AudioClip theLoserAudio;
+
+    [Obsolete]
     void Start()
     {
         WakeMouse();
@@ -27,6 +31,18 @@ public class GeneralUtils : MonoBehaviour
             Debug.Log("The winner in general utils is: " + PhotonNetwork.CurrentRoom.CustomProperties["Winner"]);
             UpdateRoundWonByText();
         }
+
+        AudioSource mainCameraAudioSource = gameObject.GetComponent<AudioSource>();
+        if ((string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"] == theWinner)
+        {            
+            mainCameraAudioSource.clip = theWinnerAudio;
+        }
+        else
+        {
+            mainCameraAudioSource.clip = theLoserAudio;
+        }
+        mainCameraAudioSource.loop = true;
+        mainCameraAudioSource.Play();
 
         Dictionary<int, Player> playerList = PhotonNetwork.CurrentRoom.Players;
         foreach (var player in playerList)

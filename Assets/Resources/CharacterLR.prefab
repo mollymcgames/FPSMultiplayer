@@ -2215,6 +2215,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   totalMachinesFixed: 0
+  pickupPartsSound: {fileID: 8300000, guid: 021403cbb6e311e4e88b987fea756df1, type: 3}
 --- !u!114 &7055089336666354758
 MonoBehaviour:
   m_ObjectHideFlags: 0

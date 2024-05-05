@@ -649,6 +649,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   totalMachinesFixed: 0
+  pickupPartsSound: {fileID: 0}
 --- !u!1 &5695603288488626849
 GameObject:
   m_ObjectHideFlags: 0
