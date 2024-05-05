@@ -21,7 +21,6 @@ public class Main : MonoBehaviour
         Web =  GetComponent<Web>();
     }
 
-    [System.Obsolete]
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Tab))

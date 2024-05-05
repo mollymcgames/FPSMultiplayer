@@ -41,7 +41,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     // private bool spawnlightRealmPlayer = true; //flag to determine which team to spawn next
 
-    [Obsolete]
     public void Start()
     {
         timer = GetComponent<Timer>();
@@ -115,8 +114,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         Debug.Log("Joined lobby!");
     }
-
-    [Obsolete]
+    
     public override void OnJoinedRoom()
     {
         base.OnJoinedRoom();
@@ -133,7 +131,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         SetImageAlpha(playerUIImage, 1f);            
     }
 
-    [Obsolete]
     public void RespawnPlayer()
     {
         Debug.Log("Respawning player: " + nickname);
@@ -201,7 +198,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.Destroy(vfxObject);
     }
 
-    [Obsolete]
     void SpawnNewPlayer()
     {
         //FPSGameManager fpm = FPSGameManager.Instance;
@@ -289,7 +285,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         return _player;
     }
 
-    [Obsolete]
     private void setOnScreenPlayerStatsAndVisibility(GameObject _player)
     {
         // Put name on screen

@@ -9,7 +9,6 @@ public class Login : MonoBehaviour
    public InputField PasswordInput;
    public Button LoginButton;
 
-    [System.Obsolete]
     void Start()
    {
         LoginButton.onClick.AddListener(() =>
