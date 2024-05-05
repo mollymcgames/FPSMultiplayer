@@ -1,4 +1,6 @@
 using Photon.Pun;
+using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class StartMenuController : MonoBehaviour
@@ -18,18 +20,15 @@ public class StartMenuController : MonoBehaviour
         mainCameraAudioSource.clip = clipMenuMusic;
         mainCameraAudioSource.loop = true;
         mainCameraAudioSource.Play();
-        /*        if (FPSGameManager.Instance.PlayerInfo.reloadRequired == false)
-                {
-                    GameObject temp = GameObject.Find("MenuMusic");
-                    if (temp != null)
-                        audioSource = GetComponent<AudioSource>();            
-                    if (audioSource != null && !audioSource.isPlaying)
-                    {
-                        Debug.Log("Making another new thing");
 
-                        DontDestroyOnLoad(mainCameraAudioSource);
-                    }
-                }*/
+        if (FPSGameManager.Instance != null && FPSGameManager.Instance.PlayerInfo.reloadRequired == true)
+        {
+            StartCoroutine(Main.instance.Web.RefreshUser(FPSGameManager.Instance.PlayerInfo.id));
+        }
+        FPSGameManager.Instance.PlayerInfo.reloadRequired = false;
+        
+        TextMeshProUGUI goldCoinsText = GameObject.Find("CoinsCount").GetComponent<TextMeshProUGUI>();
+        goldCoinsText.text = FPSGameManager.Instance.PlayerInfo.goldCoins.ToString();
     }
 
     public void StartGame()
@@ -50,21 +49,33 @@ public class StartMenuController : MonoBehaviour
         if (GameObject.Find("FPSGameManager"))
             FPSGameManager.Instance.PlayerInfo = null;
 
+        StartCoroutine(WaitThenLogout(2));
+    }
+
+    IEnumerator WaitThenLogout(int duration)
+    {
+        yield return new WaitForSeconds(duration);
         // Stop any menu music now!
         Destroy(GameObject.Find("MainMenuCamera"));
         PhotonNetwork.LoadLevel("Login");
     }
 
-
     public void ExitGame()
     {    
         AudioSource mainCameraAudioSource = gameObject.GetComponent<AudioSource>();
         mainCameraAudioSource.clip = clipUiExit;
+        mainCameraAudioSource.loop = false;
         mainCameraAudioSource.Play();
 
+        StartCoroutine(WaitThenExit(2));
+    }
+
+    IEnumerator WaitThenExit(int duration)
+    {
+        yield return new WaitForSeconds(duration);
         // Stop any menu music now!
         Destroy(GameObject.Find("MainMenuCamera"));
-        Application.Quit();       
+        Application.Quit();
     }
 
 }
