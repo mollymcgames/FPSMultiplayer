@@ -95,7 +95,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         // Stop any menu music now!
         if (SceneManager.GetActiveScene().name == "FPSScene")
         {
-            Destroy(GameObject.Find("MainMenuCamera"));
+            Destroy(GameObject.Find("MenuMusic"));
         }
 
         var options = new RoomOptions() { };

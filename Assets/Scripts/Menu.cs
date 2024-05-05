@@ -1,21 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviourPun
 {
     public Login Login;
     public AudioClip clipMenuMusic;
+    private AudioSource audioSource;
 
     private void Start()
     {
-        AudioSource mainCameraAudioSource = gameObject.GetComponent<AudioSource>();
-        mainCameraAudioSource.clip = clipMenuMusic;
-        mainCameraAudioSource.loop = true;
-        mainCameraAudioSource.Play();
-        DontDestroyOnLoad(mainCameraAudioSource);
+        GameObject menuBase = GameObject.Find("MenuMusic");
+        if (menuBase == null)
+        {
+            audioSource = GameObject.Find("MainMenuCamera").GetComponent<AudioSource>();
+            Debug.Log("Making a new thing");            
+            gameObject.name = "MenuMusic";
+            AudioSource mainCameraAudioSource = gameObject.GetComponent<AudioSource>();
+            mainCameraAudioSource.clip = clipMenuMusic;
+            mainCameraAudioSource.loop = true;
+            mainCameraAudioSource.Play();
+            DontDestroyOnLoad(mainCameraAudioSource);
+        }
     }
 
     public void PlayGame()

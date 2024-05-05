@@ -1,8 +1,5 @@
 using Photon.Pun;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class StartMenuController : MonoBehaviour
 {
@@ -11,17 +8,28 @@ public class StartMenuController : MonoBehaviour
     public AudioClip clipUiExit;
     public AudioClip clipMenuMusic;
 
+    private AudioSource audioSource;
 
     private void Start()
     {
-        if (FPSGameManager.Instance.PlayerInfo.reloadRequired == true)
-        {
-            AudioSource mainCameraAudioSource = gameObject.GetComponent<AudioSource>();
-            mainCameraAudioSource.clip = clipMenuMusic;
-            mainCameraAudioSource.loop = true;
-            mainCameraAudioSource.Play();
-            DontDestroyOnLoad(mainCameraAudioSource);
-        }
+        AudioSource mainCameraAudioSource = gameObject.GetComponent<AudioSource>();
+        if ( gameObject.GetComponent<AudioListener>() == null)
+            gameObject.AddComponent<AudioListener>();
+        mainCameraAudioSource.clip = clipMenuMusic;
+        mainCameraAudioSource.loop = true;
+        mainCameraAudioSource.Play();
+        /*        if (FPSGameManager.Instance.PlayerInfo.reloadRequired == false)
+                {
+                    GameObject temp = GameObject.Find("MenuMusic");
+                    if (temp != null)
+                        audioSource = GetComponent<AudioSource>();            
+                    if (audioSource != null && !audioSource.isPlaying)
+                    {
+                        Debug.Log("Making another new thing");
+
+                        DontDestroyOnLoad(mainCameraAudioSource);
+                    }
+                }*/
     }
 
     public void StartGame()

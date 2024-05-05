@@ -12,6 +12,8 @@ public class Main : MonoBehaviour
     private EventSystem eventSystemHandle;
     public InputField UsernameInput;
     public InputField PasswordInput;
+    public InputField NewUsernameInput;
+    public InputField NewPasswordInput;
 
     private void Start()
     {
@@ -33,13 +35,30 @@ public class Main : MonoBehaviour
                 case "PasswordInput":
                     eventSystemHandle.SetSelectedGameObject(GameObject.Find("UsernameInput"));
                     break;
+                case "NewUsername":
+                    eventSystemHandle.SetSelectedGameObject(GameObject.Find("Password"));
+                    break;
+                case "Password":
+                    eventSystemHandle.SetSelectedGameObject(GameObject.Find("NewUsername"));
+                    break;
+
                 default:
                     break;
             }
         }
         else if (Input.GetKeyDown(KeyCode.Return))
         {
-            StartCoroutine(Main.instance.Web.Login(UsernameInput.text, PasswordInput.text));
+            if (eventSystemHandle != null)
+            {
+                string currentPlace = eventSystemHandle.currentSelectedGameObject.name;
+                if (currentPlace != null)
+                {
+                    if (currentPlace == "NewUsername" || currentPlace == "Password")
+                        StartCoroutine(Main.instance.Web.RegisterUser(NewUsernameInput.text, NewPasswordInput.text));
+                    else
+                        StartCoroutine(Main.instance.Web.Login(UsernameInput.text, PasswordInput.text));
+                }
+            }
         }
 
     }

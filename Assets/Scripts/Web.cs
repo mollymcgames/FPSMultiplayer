@@ -1,24 +1,23 @@
+using Newtonsoft.Json;
+using Photon.Pun;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Net;
-using Unity.VisualScripting;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using Newtonsoft.Json;
 
 public class Web : MonoBehaviour
 {
     public String apiUrl;
+    public TextMeshProUGUI feedbackText;
+    public GameObject errorPanel;
 
     private void Start()
     {
         FPSGameManager.Instance.apiUrl = apiUrl;
     }
-
-    //public IEnumerator RefreshUser(int userId, Action<string> callback = null)
+    
     [Obsolete]
     public IEnumerator RefreshUser(int userId)
     {
@@ -28,7 +27,8 @@ public class Web : MonoBehaviour
 
             if (www.isNetworkError || www.isHttpError)
             {
-                Debug.LogError(www.error);
+                Debug.Log(www.error);
+                ShowError(www.error);
             }
             else
             {
@@ -38,8 +38,20 @@ public class Web : MonoBehaviour
             }
         }
     }
-    
-    public Text feedbackText;
+
+    [Obsolete]
+    private void ShowError(string errorMessage)
+    {
+        feedbackText.text = errorMessage;
+        errorPanel.active = true;
+    }
+
+    [Obsolete]
+    private void HideError()
+    {
+        feedbackText.text = "";
+        errorPanel.active = false;
+    }
 
     [Obsolete]
     public IEnumerator Login(string username, string password)
@@ -50,40 +62,39 @@ public class Web : MonoBehaviour
 
             if (www.isNetworkError || www.isHttpError)
             {
-                Debug.LogError(www.error);
+                Debug.Log(www.error);
+                if (www.responseCode == 401)
+                    ShowError("Your credentials were incorrect, try again!");
+                else
+                    ShowError(www.error);
             }
             else
             {
-                Debug.Log(www.downloadHandler.text);
                 // Handle the response from the server
                 string response = www.downloadHandler.text.Trim(); // Trim to remove any extra whitespace
                 if (www.responseCode == 200)
                 {
                     Debug.Log("Login successful: " + response);
-                    feedbackText.text = ""; // Optionally clear or set a success message
+                    HideError();
 
                     // Store the logged in player info into the Game Manager for use in the next scene.
                     FPSGameManager.Instance.PlayerInfo = JsonConvert.DeserializeObject<PlayerInfo>(response);
-                    
 
-                    SceneManager.LoadSceneAsync(1);
+                    SceneManager.LoadScene("StartMenu");
                 }
                 else if (www.responseCode == 401)
                 {
-                    Debug.LogError("Login failed: Wrong credentials.");
-                    feedbackText.text = "Wrong credentials. Please try again.";
+                    Debug.Log("Login failed: Wrong credentials.");
+                    ShowError("Wrong credentials. Please try again.");
                 }
                 else
                 {
-                    Debug.LogError("Login failed: Unexpected server response.");
-                    feedbackText.text = "Login failed. Please try again.";
+                    Debug.Log("Login failed: Unexpected server response.");
+                    ShowError("Login failed. Please try again.");
                 }
-
             }
         }
     }
-
-    public Text feedbackText2;
 
     [Obsolete]
     public IEnumerator RegisterUser(string username, string password)
@@ -99,7 +110,8 @@ public class Web : MonoBehaviour
 
             if (www.isNetworkError || www.isHttpError)
             {
-                Debug.LogError(www.error);
+                Debug.Log(www.error);
+                ShowError(www.error);
             }
             else
             {
@@ -108,18 +120,18 @@ public class Web : MonoBehaviour
                 string response = www.downloadHandler.text.Trim(); // Trim to remove any extra whitespace
                 if (www.responseCode == 201)
                 {
-                    Debug.Log("Registration successful");                   
-                    SceneManager.LoadSceneAsync(0);
+                    Debug.Log("Registration successful");
+                    SceneManager.LoadScene("Login");
                 }
                 else if (response == "Username is already taken.")
                 {
-                    Debug.LogError("Registration failed: Username taken.");
-                    feedbackText2.text = "Username taken";
+                    Debug.Log("Registration failed: Username taken.");
+                    ShowError("Username taken");
                 }              
                 else
                 {
-                    Debug.LogError("Registration failed: Unexpected server response.");
-                    feedbackText2.text = "Registration failed. Please try again.";
+                    Debug.Log("Registration failed: Unexpected server response.");
+                    ShowError("Registration failed. Please try again.");
                 }
 
             }

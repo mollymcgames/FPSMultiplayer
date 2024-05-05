@@ -3081,6 +3081,7 @@ MonoBehaviour:
   clipUiLoading: {fileID: 8300000, guid: acadfa89516507b4cb73c38bb8dc898d, type: 3}
   clipUiLogout: {fileID: 8300000, guid: f5ecf179ada11d44ba769bde70bc7f27, type: 3}
   clipUiExit: {fileID: 8300000, guid: 263624ddd234a2d49a9de7d75eef8505, type: 3}
+  clipMenuMusic: {fileID: 8300000, guid: 94b2a807960bd2747b979760d2eac2ac, type: 3}
 --- !u!82 &1502153258
 AudioSource:
   m_ObjectHideFlags: 0
