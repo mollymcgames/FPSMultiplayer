@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -621,6 +621,7 @@ GameObject:
   - component: {fileID: 730897975}
   - component: {fileID: 730897977}
   - component: {fileID: 730897978}
+  - component: {fileID: 730897979}
   m_Layer: 0
   m_Name: SceneElements
   m_TagString: Untagged
@@ -667,8 +668,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81846e5043fc04243866b48c6ed1b280, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roundWonByText: {fileID: 993406655}
   theWinner: Dark
+  theWinnerAudio: {fileID: 8300000, guid: 44aae175d5ecb8244a52656183d1c2ad, type: 3}
+  theLoserAudio: {fileID: 8300000, guid: a8afe049a24ae8a4cb652fdd27bbef92, type: 3}
 --- !u!114 &730897978
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -681,6 +683,102 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 316495a857d65fe4297127e03708160d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!82 &730897979
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 730897974}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &993406653
 GameObject:
   m_ObjectHideFlags: 0
@@ -845,6 +943,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63a749bf91cd1f8438b432e5c9491839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  apiUrl: 
 --- !u!4 &1169409722
 Transform:
   m_ObjectHideFlags: 0

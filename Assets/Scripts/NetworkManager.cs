@@ -10,6 +10,7 @@ using UnityEngine.UI;
 using Photon.Pun.Demo.PunBasics;
 using System.Net.Http;
 using Newtonsoft.Json;
+using UnityEngine.SceneManagement;
 //'PunTeams' is obsolete: 'do not use this or add it to the scene. use PhotonTeamsManager instead'CS0618
 // using Photon.Pun.UtilityScripts;
 
@@ -48,6 +49,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             StartCoroutine(Main.instance.Web.RefreshUser(FPSGameManager.Instance.PlayerInfo.id));
         }
+        FPSGameManager.Instance.PlayerInfo.reloadRequired = false;
+
+        // This is now automatic, as this scene now enters from the "MainMenu" scene.
+        JoinRoomButtonPressed();
     }
 
     void Awake()
@@ -85,6 +90,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override async void OnJoinedLobby()
     {
         base.OnJoinedLobby();
+
+        // Stop any menu music now!
+        if (SceneManager.GetActiveScene().name == "FPSScene")
+        {
+            Destroy(GameObject.Find("MainMenuCamera"));
+        }
 
         var options = new RoomOptions() { };
         options.CustomRoomProperties = new ExitGames.Client.Photon.Hashtable();
