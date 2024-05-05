@@ -12,13 +12,23 @@ public class Health : MonoBehaviourPunCallbacks
     public bool isLocalPlayer;
 
     public TextMeshProUGUI healthText;
+    public AudioClip hitSound;
 
+    private AudioSource mainCameraAudioSource;
 
-    [PunRPC]
-    [Obsolete]
+    private void Start()
+    {
+        mainCameraAudioSource = gameObject.GetComponent<AudioSource>();
+    }
+
+    [PunRPC]    
     public void TakeDamage(int damage, string userIdOfAttackingPlayer)
     {
         Debug.Log("Taking damage from: " + userIdOfAttackingPlayer);
+
+        mainCameraAudioSource.clip = hitSound;
+        mainCameraAudioSource.loop = false;
+        mainCameraAudioSource.Play();
 
         health -= (int)Math.Floor(damage * HealthVulnerabilityCalculator.CalculateDamageModifier((string)PhotonNetwork.LocalPlayer.CustomProperties["Realm"]));
 
