@@ -13,7 +13,6 @@ public class Menu : MonoBehaviourPun
         if (menuBase == null)
         {
             audioSource = GameObject.Find("MainMenuCamera").GetComponent<AudioSource>();
-            Debug.Log("Making a new thing");            
             gameObject.name = "MenuMusic";
             AudioSource mainCameraAudioSource = gameObject.GetComponent<AudioSource>();
             mainCameraAudioSource.clip = clipMenuMusic;

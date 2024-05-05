@@ -153,6 +153,7 @@ public class Web : MonoBehaviour
                 {
                     Debug.Log("Ooops, didn't save: " + response);
                 }
+                FPSGameManager.Instance.PlayerInfo = JsonConvert.DeserializeObject<PlayerInfo>(response);
             }
         }
     }
