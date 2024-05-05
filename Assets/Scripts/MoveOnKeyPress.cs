@@ -1,10 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using TMPro;
-using UnityEngine.UI;
-using Unity.VisualScripting;
 
 public class MoveOnKeyPress : MonoBehaviourPun
 {
