@@ -15,6 +15,8 @@ public class WeaponDamage : MonoBehaviour
     public Camera camera;
 
     public GameObject hitEffect;
+    public AudioClip gunFireSound;
+    public AudioClip gunReloadSound;
 
     // Ammo
     public int mag = 5;
@@ -28,10 +30,13 @@ public class WeaponDamage : MonoBehaviour
     public Animation animation;
     public AnimationClip reloadAnimation;
 
+    private AudioSource mainCameraAudioSource;
+
     void Start()
     {
         magText.text = mag.ToString();
         amoText.text = ammo + " / " + magAmmo;
+        mainCameraAudioSource = gameObject.GetComponent<AudioSource>();
     }
 
 
@@ -63,6 +68,9 @@ public class WeaponDamage : MonoBehaviour
 
     void Reload()
     {
+        mainCameraAudioSource.clip = gunReloadSound;
+        mainCameraAudioSource.loop = false;
+        mainCameraAudioSource.Play();
 
         animation.Play(reloadAnimation.name);
 
@@ -80,7 +88,11 @@ public class WeaponDamage : MonoBehaviour
     }
 
     void Fire()
-    {
+    {        
+        mainCameraAudioSource.clip = gunFireSound;
+        mainCameraAudioSource.loop = false;
+        mainCameraAudioSource.Play();
+
         Ray ray = new Ray(camera.transform.position, camera.transform.forward); 
 
         RaycastHit hit;
