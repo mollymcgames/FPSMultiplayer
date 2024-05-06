@@ -39,6 +39,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     private string nickname = "unnamed";
     private string realm = "";
 
+    public GameObject shopPanel;
+
     // private bool spawnlightRealmPlayer = true; //flag to determine which team to spawn next
 
     public void Start()
@@ -53,6 +55,21 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
         // This is now automatic, as this scene now enters from the "MainMenu" scene.
         JoinRoomButtonPressed();
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            if (shopPanel != null)
+            {
+                shopPanel.SetActive(!shopPanel.activeSelf);
+            }
+            else
+            {
+                Debug.LogWarning("Shop panel reference not set in the inspector!");
+            }
+        }
     }
 
     void Awake()
