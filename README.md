@@ -1,4 +1,4 @@
-# FPS Multiplayer
+# Rift of the Realms
 
 ## About the game
 Rift of the Realms is a squad based sci-fi shooter that explores the eternal conflict between light and dark forces.
