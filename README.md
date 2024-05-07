@@ -54,9 +54,9 @@ has a SkyMap map to differentiate between the realms. The players are prefabs an
 in the RoomManager GameObject.
 1. *GameOverScene:* Once the timer expires, the game transitions to this scene. It displays the winning team, earned gold, and post-game stats. Players can return to the lobby from here to start a new game.
 
-**NOTE:** Trying to run the game in any other scene directly, without going through LOGIN first will cause
+**IMPORTANT NOTE:** Trying to run the game in any other scene directly, without going through LOGIN first will cause
 numerous errors because LOGIN sets up a singleton object containing the logged in player's details which are
-extensively used throughout the other scenes. You have been warned! 
+extensively used throughout the other scenes. You have been warned! The login can take up to 5 mins to connect to the database if the database is asleep. Please wait after trying to login the first time for up to 5 mins if this happens.
 
 ### Game resources
 In the "Resources" folder there are various graphical and audio elements required for the game. Of particular 
