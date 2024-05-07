@@ -64,4 +64,3 @@ note are the "CharacterLR" and "CharacterDR" prefabs which are used as the chara
 Dark realm players.
 
 There is also an "audio" folder in which the game sounds and music are stored.
-
