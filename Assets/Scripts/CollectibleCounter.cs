@@ -32,15 +32,11 @@ public class CollectibleCounter: MonoBehaviourPunCallbacks, IPunObservable
             playerMachinePartsCount = 0;
         }
 
-        // playerMachinePartsCount = (int)PhotonNetwork.LocalPlayer.CustomProperties["MachinePartsCount"];
-
         int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
-        Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter Collided with: " + other.name);
         Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter current team machine count: " + teamMachinePartsCount);
         Debug.Log("[" + actorNumber + "] OnTriggerEnter() Enter current player machine count: " + playerMachinePartsCount);        
 
         //Get the collectible PhotonView
-        Debug.Log("[" + actorNumber + "] OnTriggerEnter() for player");
 
         PhotonView collectiblePhotonView = other.GetComponent<PhotonView>();       
         
