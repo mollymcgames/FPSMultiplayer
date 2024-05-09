@@ -7,7 +7,6 @@ using Photon.Realtime;
 using TMPro;
 using System;
 using UnityEngine.UI;
-using Photon.Pun.Demo.PunBasics;
 using System.Net.Http;
 using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
